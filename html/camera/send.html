@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <link rel="stylesheet" href="../../css/bootstrap/bootstrap.min.css">
+    <!-- <script type="text/javascript" src="../../script/group/jquery.min.js"></script> -->
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: #F5F5F5;
+        }
+
+        header {
+            /*display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-self: center;
+            padding-top: 25px;
+            height: 45px;
+            width: 100%;
+            background: #fff;
+            border-bottom: rgb(204, 204, 204) solid 4px;*/
+            margin-top: 20px;
+            box-shadow: 0 0px 0px #fff!important;
+            -webkit-box-shadow: 0 0px 0px #fff!important;
+            background-color: #fff!important;
+        }
+
+        .back {
+            border: none;
+            background: none;
+            font-size: 15px;
+            line-height: 45px;
+            outline: none;
+        }
+
+        .title {
+            font-size: 18px;
+            line-height: 45px;
+        }
+
+        .main {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            width: 100%;
+        }
+
+        textarea::-webkit-input-placeholder {
+            font-size: 12px;
+            line-height: 18px;
+        }
+
+        .describe {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 12px;
+            line-height: 18px;
+            color: #324255;
+        }
+
+        .video_box {
+            margin-bottom: 15px;
+            width: 100px;
+            height: 150px;
+            background: #666;
+        }
+
+        .address {
+            border-top: 1px solid #999;
+            border-bottom: 1px solid #999;
+            padding: 15px 0 15px 0;
+            width: 100%;
+        }
+
+        .address span {
+            font-size: 10px;
+        }
+
+        .map {
+            margin-top: 10px;
+            width: 100%;
+            height: 100px;
+            background: #999;
+        }
+
+        .secret {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-self: flex-end;
+            font-size: 10px;
+        }
+
+        .publish {
+            display: block;
+            margin: 0 auto;
+            border: none;
+            width: 90%;
+            height: 45px;
+            border-radius: 2.5px;
+            background: #777;
+            color: #fff;
+            outline: none;
+        }
+
+        .travel {
+            padding: 15px 0 15px 0;
+            border-bottom: 1px solid #999;
+        }
+
+        .travel span {
+            font-size: 10px;
+        }
+
+        .img_video {
+            height: 100%;
+            width: 100%
+        }
+
+        .mui-table-view-cell {}
+
+        textarea {
+            margin-top: 10px;
+            /*width: 80%;*/
+        }
+
+        .note_body {
+            /*display: flex;
+              flex-direction: row;
+              justify-content: flex-start;*/
+        }
+
+        .note_title {
+            color: #37302F;
+            display: block;
+            margin: 0 auto;
+            font-size: 18px;
+        }
+
+        .note_img_icon {
+            height: 13px;
+            margin-top: -3px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <header>
+        <button onclick="back()" class="back"><</button>
+        <span class="title">发布</span>
+        <div style="width: 30px;"></div>
+    </header> -->
+    <div style="background-color:#fff;height:20px;"> </div>
+    <header id="header" class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" onclick="back()"></a>
+        <h1 class="mui-title">发布</h1>
+    </header>
+    <div class="main">
+        <div class="" style="margin: 0px 0px; margin-top:60px;width:100%;">
+            <textarea id="textarea" class='text_area' style='width:100%; border:0px;' onkeyup="this.value = this.value.slice(0,50)" rows="5" placeholder="说点有趣的吧~"></textarea>
+        </div>
+        <div class="video_box"><img src="" alt="" class="img_video"></div>
+        <ul class="mui-table-view" style="position: static;">
+            <li class="mui-table-view-cell" style="border: 0px!important;" onclick="get_location()">
+                <a class="mui-navigate-right">
+                    <span class="mui-icon mui-icon-location"></span> <span class="address">添加地点</span>
+                </a>
+            </li>
+            <!-- <li class="mui-table-view-cell">
+                <a class="mui-navigate-right">
+  						添加游记
+  					</a>
+            </li> -->
+
+            <li class="mui-table-view-cell">
+                <a class="mui-navigate-right" onclick="open_note()">
+              添加攻略
+            </a>
+            </li>
+            <li class="mui-table-view-cell">
+
+                是否为私密
+                <div class="mui-switch mui-switch-blue mui-switch-mini" id='permission'>
+                    <div class="mui-switch-handle"></div>
+                </div>
+            </li>
+        </ul>
+
+        <div style="margin-top:50px;">
+            <!-- <button class="publish" onclick="send_video()">发布</button> -->
+            <button type="button" class="mui-btn mui-btn-primary mui-btn-outlined mui-btn-block">发布</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:100px;">
+        <!-- 模态框 -->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div type="" class="close" data-dismiss="modal" aria-hidden="true" style=""></div>
+                    <h4 class="modal-title note_title" id="myModalLabel">攻略</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="">&times;</button>
+                </div>
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2; "><img class="note_img_icon" src="../../image/note/icon_meishi.png" alt=""> 美食:</div><br>
+                    <textarea placeholder="美食" id='food'></textarea>
+                </div>
+
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2; "><img class="note_img_icon" src="../../image/note/icon_meishi.png" alt="">交通:</div>
+                    <textarea placeholder="交通" id='traffic'></textarea>
+                </div>
+
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2;"><img class="note_img_icon" src="../../image/note/icon_meishi.png" alt=""> 住宿:</div>
+                    <textarea placeholder="住宿" id='docm'></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" style="padding:10px;width:94%;margin:0 auto;margin-bottom:15px;" onclick="up_card()">提交</button>
+            </div>
+            <!-- /.modal-content -->
+
+        </div>
+        <!-- /.modal -->
+    </div>
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../../script/bootstrap/bootstrap.min.js"></script>
+<script>
+    var food = '',
+        traffic = '',
+        docm = ''
+
+    function open_note() {
+        $('#myModal').modal('show')
+    }
+
+    function up_card() {
+        $('#myModal').modal('hide')
+        food = $('#food').val()
+        traffic = $('#traffic').val()
+        docm = $('#docm').val()
+    }
+
+    function back() {
+        api.closeFrame({
+            name: 'send'
+        });
+    }
+    var image_path = '',
+        video_path = '',
+        lon = -9,
+        lat = -9,
+        name = '无',
+        address = '无',
+
+        apiready = function() {
+            get_lat_lon() //获取定位
+
+            api.addEventListener({
+                name: 'select_data_get'
+            }, function(ret, err) {
+                $('.address').text(ret.value['name'])
+                lon = ret.value['lon'],
+                    lat = ret.value['lat'],
+                    name = ret.value['name'],
+                    address = ret.value['address']
+            });
+
+            image_path = api.pageParam['thumbnailPath'],
+                video_path = api.pageParam['videoPath']
+            console.log(video_path);
+            set_img_path(image_path)
+
+        }
+
+    mui(document.body).on('tap', '.mui-btn', function(e) {
+        send_video()
+        mui('header').progressbar({
+            progress: undefined
+        }).show();
+        mui(this).button('loading');
+        setTimeout(function() {
+            mui(this).button('reset');
+        }.bind(this), 20000);
+    });
+
+    function send_video() {
+        var permission = 1 //权限 1 为公开   0为私密
+        if ($("#permission").hasClass("mui-active") == true) {
+            permission = 0
+        } else {}
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/api/upload_video/',
+            method: 'post',
+            data: {
+                values: {
+                    desc: $('.text_area').val(),
+                    permission: permission,
+                    user_id: $api.getStorage('id'),
+                    music_id: 1,
+                    travelsnote_id: -1,
+                    lon: lon,
+                    lat: lat,
+                    name: name,
+                    address: address,
+                    food: food,
+                    traffic: traffic,
+                    docm: docm
+                },
+                files: {
+                    file: [video_path, image_path]
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                mui('header').progressbar().hide();
+                api.toast({
+                    msg: '上传成功~',
+                    duration: 3000,
+                    location: 'bottom'
+                });
+                setTimeout(function() {
+                    api.closeFrame();
+                }, 2000)
+
+            } else {
+
+                mui('header').progressbar().hide();
+                api.toast({
+                    msg: '上传失败',
+                    duration: 3000,
+                    location: 'bottom'
+                });
+                api.alert({
+                    msg: JSON.stringify(err)
+                });
+            }
+        });
+    }
+
+
+
+    function get_location() {
+        api.openFrame({
+            name: 'select_address',
+            url: 'select_address.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {},
+            bgColor: 'rgba(0,0,0,0)',
+            scrollEnabled: false,
+            // hScrollBarEnabled: false,
+        });
+    }
+
+
+    function set_img_path(image_path) {
+        $api.attr($api.dom('.img_video'), 'src', image_path);
+    }
+
+    function get_lat_lon() {
+        var baiduLocation = api.require('baiduLocation');
+        baiduLocation.startLocation({
+            accuracy: '100m',
+            filter: 1,
+            autoStop: true
+        }, function(ret, err) {
+            if (ret.status) {
+                var baiduLocation = api.require('baiduLocation');
+                baiduLocation.getLocation(function(ret, err) {
+                    if (ret) {
+                        // 获取地理位置
+                        $api.setStorage('lon', ret['longitude']);
+                        $api.setStorage('lat', ret['latitude']);
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+</script>
+
+
+
+</html>

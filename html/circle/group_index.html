@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>APICloud App</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" href="../../css/swiper.min.css">
+
+    <link rel="stylesheet" href="../../css/group/amazeui.min.css" />
+    <link rel="stylesheet" href="../../css/group/style.css" />
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <script type="text/javascript" src="../../script/group/jquery.min.js"></script>
+    <script type="text/javascript" src="../../script/group/amazeui.min.js"></script>
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+    <style>
+        .group_header {
+            height: 30px;
+            border-radius: 5em;
+            margin-left: -15px;
+        }
+
+        .group_index_banner {
+            height: 150px;
+        }
+    </style>
+</head>
+
+
+<script id="interpolationtmpl" type="text/html">
+
+    <div style="position:absolute; top:20px;left:15px; color:#fff;z-index:999;" onclick="clouse_group_index()">返回</div>
+
+    <img src="{{list['qun_tx']}}" style='width:100%;' class='group_index_banner'>
+
+    <div style="padding:10px;height:85px; width:100%; overflow:hidden;">{{list['qun_sm']}}</div>
+
+
+    <ul class="mui-table-view">
+        <li class="mui-table-view-cell">
+            {{list['qun_zh']}}成员 <span style="float:right;margin-right:0px;width:40%;">
+            <img class="group_header" src="../../image/group/touxiang.png" alt="">
+              <img class="group_header" src="../../image/group/touxiang.png" alt="">
+                <img class="group_header" src="../../image/group/touxiang.png" alt="">
+            共100人</span>
+        </li>
+    </ul>
+
+    <!-- <ul class="mui-table-view">
+        <li class="mui-table-view-cell mui-collapse">
+            <a class="mui-navigate-right" href="#">管理群</a>
+            <div class="mui-collapse-content">
+                <ul class="mui-table-view" style="margin-top:-11px;">
+                    <li class="mui-table-view-cell">
+                        编辑群资料
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul> -->
+
+    <ul class="mui-table-view" style="margin-top:5px;">
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">消息免打扰</a>
+            <div class="mui-switch mui-switch-blue mui-switch-mini">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">置顶群聊</a>
+            <div class="mui-switch mui-switch-blue mui-switch-mini">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            所在地区 <span style="float:right;">{{list['address']}}</span>
+
+        </li>
+    </ul>
+    <div class="h50"></div>
+    {{if is_or==1}}
+    <div data-am-widget="navbar" id='join' class="am-navbar am-cf am-navbar-default ">
+        <button id='join_in' style="width:100%; height:100%; background:blue;color:#fff;border:none;" onclick="join_in_group('{{list['qun_id']}}','{{list['qun_zh']}}','{{list['qun_tx']}}','{{list['qun_sm']}}','{{list['glid']}}')"> 加入群聊</button>
+    </div>
+    {{else}}
+    <div data-am-widget="navbar" id='send' class="am-navbar am-cf am-navbar-default ">
+        <button id='join_in' style="width:100%; height:100%; background:blue;color:#fff;border:none;" onclick="lt('{{list['qun_id']}}','{{list['qun_zh']}}','{{list['qun_tx']}}')"> 发消息</button>
+    </div>
+    {{/if}}
+</script>
+
+
+
+<body id="interpolation">
+
+</body>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/swaper/swiper.min.js"></script>
+
+
+
+<script type="text/javascript">
+    var qun_data = ''
+    apiready = function() {
+        g_id = api.pageParam['id']
+        var query = api.require("query");
+        query.createQuery(function(ret, err) {
+            if (ret && ret.qid) {
+                var queryId = ret.qid;
+                query.whereEqual({
+                    qid: queryId,
+                    column: 'qun_id',
+                    value: g_id
+                });
+                var model = api.require("model");
+                model.findAll({
+                    class: "qun",
+                    qid: queryId
+                }, function(ret, err) {
+                    qun_data = ret
+                    var query = api.require("query");
+                    query.createQuery(function(ret, err) {
+                        if (ret && ret.qid) {
+                            var queryId = ret.qid;
+                            query.whereEqual({
+                                qid: queryId,
+                                column: 'uid',
+                                value: $api.getStorage('id')
+                            });
+                            query.whereEqual({
+                                qid: queryId,
+                                column: 'qun_id',
+                                value: g_id
+                            });
+                            var model = api.require('model');
+                            model.findAll({
+                                class: "qun_user",
+                                qid: queryId
+                            }, function(rets, err) {
+                              // alert(JSON.stringify(ret))
+                                if (rets.length > 0) {
+                                    if (rets[0]['zt'] == 2) {
+                                        var data = {
+                                            list: qun_data[0],
+                                            is_or: 0
+                                        };
+                                    } else {
+                                        var data = {
+                                            list: qun_data[0],
+                                            is_or: 1
+                                        };
+                                    }
+                                } else {
+                                    var data = {
+                                        list: qun_data[0],
+                                        is_or: 1
+                                    };
+                                }
+                                var html = template('interpolationtmpl', data);
+                                document.getElementById('interpolation').innerHTML = html;
+                            });
+                        }
+                    })
+
+
+                });
+            }
+        })
+    }
+
+
+    function lt(id, xm, tx) {
+        api.openWin({
+            reload: true,
+            name: 'chat',
+            url: '../group/win_chat.html',
+            pageParam: {
+                id: id,
+                zh: xm,
+                tx: tx
+            },
+            vScrollBarEnabled: false,
+        });
+        if ($api.getStorage('id') == id) {} else {
+            var rong = api.require('rongCloud2');
+            rong.clearMessagesUnreadStatus({
+                conversationType: 'PRIVATE',
+                targetId: id
+            }, function(ret, err) {})
+        }
+        api.sendEvent({
+            name: 'hhxx'
+        });
+    }
+
+
+    function clouse_group_index() {
+        api.closeFrame({
+            name: 'group_index'
+        });
+    }
+
+    function join_in_group(id, zh, tx, sm, glid) {
+
+        api.openWin({
+            reload: true,
+            name: 'win_join_qun',
+            url: '../group/win_join_qun.html',
+            vScrollBarEnabled: false,
+            pageParam: {
+                qun_id: id,
+                qun_zh: zh,
+                qun_tx: tx,
+                qun_sm: sm,
+                glid: glid
+            }
+        });
+    }
+</script>
+
+
+
+</html>

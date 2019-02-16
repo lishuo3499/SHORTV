@@ -1,0 +1,223 @@
+<!-- <!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+	<style>
+		.aui-bar-light {
+			border-bottom: 1px solid #E8E8E8;
+			color: #0062CC;
+		}
+
+		.aui-bar-light a {
+			color: #0099CC;
+		}
+
+		.aui-bar-nav.aui-bar-light .aui-iconfont {
+			color: #787878;
+		}
+
+		.aui-searchbar {
+			background: transparent;
+		}
+
+		.aui-bar-nav .aui-searchbar-input {
+			background-color: #ffffff;
+		}
+
+		.aui-bar-light .aui-searchbar-input {
+			background-color: #f5f5f5;
+		}
+
+		.aui-searchbar .aui-iconfont {
+			font-size: 0.7rem;
+		}
+
+		.aui-list-item.wechat-top {
+			background-color: #f3f3f7;
+		}
+
+		.aui-list .wechat-avatar {
+			width: 3rem;
+		}
+
+		.wechat-avatar .aui-row-padded {
+			background-color: #dddee0;
+			padding: 0.1rem;
+			border-radius: 0.2rem;
+			margin-left: -0.05rem;
+			margin-right: -0.05rem;
+		}
+
+		.wechat-avatar,
+		.wechat-avatar>img {
+			border-radius: 0.4rem;
+		}
+
+		.aui-list {
+			border-top: none;
+		}
+
+		@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+			.aui-list {
+				border: none;
+				background-size: 100% 0px;
+			}
+		}
+
+		.kong {
+			height: 9rem;
+			background-image: url(../res/e.png);
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: 8rem;
+			position: relative;
+			top: 3rem;
+			display: none
+		}
+
+		.kong_wz {
+			position: relative;
+			top: 8rem;
+			text-align: center;
+			font-size: 0.85rem;
+			color: #A1A1A1
+		}
+
+		.add {
+			position: relative;
+			top: 2rem;
+			left: 80%;
+			font-size: 0.8rem;
+			color: #0099CC;
+			z-index: 88888
+		}
+	</style>
+</head>
+
+<body>
+	<header class="aui-bar aui-bar-nav aui-bar-light" id="head">
+		<a class="aui-pull-left aui-btn" onclick="back()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+		<div class="aui-title" style="left:1.5rem; right: 2.2rem;">
+			<div class="aui-searchbar" id="search">
+				<div class="aui-searchbar-input aui-border-radius">
+					<i class="aui-iconfont aui-icon-search"></i>
+					<input type="text" placeholder="请输入群名称" id="qun_id">
+				</div>
+			</div>
+		</div>
+		<a class="aui-pull-right aui-btn" onclick="back()"> 取消</a>
+	</header>
+	<div class="aui-content aui-margin-t-15">
+		<ul class="aui-list aui-media-list" id="quns"></ul>
+	</div>
+	<div class="kong">
+		<div class="kong_wz">
+			没有找到该群
+		</div>
+	</div>
+	<div class="spinner">
+		<div class="bounce1"></div>
+		<div class="bounce2"></div>
+		<div class="bounce3"></div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/group/zepto.min.js"></script>
+<script type="text/javascript" src="../../script/group/aui-dialog.js"></script>
+<script type="text/javascript">
+	apiready = function() {
+		api.parseTapmode();
+		$api.fixStatusBar($api.byId('head'));
+		//实时监听输入框数值变化
+		$('#qun_id').on('input', function(e) {
+			var qun_id = $('#qun_id').val();
+			if (qun_id.length > 1) {
+				qun_info(qun_id); //输入框数值长度大于3个字符就执行查询函数
+			}
+		})
+	};
+
+	function back() {
+		api.closeWin({});
+	}
+
+	function qun_info(qun_id) {
+		var html = '';
+		var query = api.require("query");
+		$api.css($api.dom('.spinner'), 'display: block');
+		api.ajax({
+			url: $api.getStorage('IPandPORT') + '/api/search_group/',
+			method: 'get',
+			data: {
+				values: {
+					group_name: qun_id,
+				}
+			}
+		}, function(ret, err) {
+			alert(JSON.stringify(ret))
+			if (ret.length > 0) {
+				$api.css($api.dom('.loader'), 'display:none');
+				html += '<div class="add" tapmode onclick="join_qun(\'' + ret[0].id + '\',\'' + ret[0].name + '\',\'' + ret[0].img_name + '\',\'' + ret[0].desc + '\')">申请加入</div>';
+				html += '<li class="aui-list-item aui-list-item-middle">';
+				html += '<div class="aui-media-list-item-inner">';
+				html += '<div class="aui-list-item-media wechat-avatar"><img src="http://linke.xtu.edu.cn/html/group_header_img' + ret[0].img_name + '" /></div>';
+				html += '<div class="aui-list-item-inner">';
+				html += '<div class="aui-list-item-text">';
+				html += '<div class="aui-list-item-title">' + ret[0].name + '</div></div>';
+				html += '<div class="aui-list-item-text aui-font-size-12">' + ret[0].desc + '</div>';
+				html += '</div></div></li>';
+				$api.css($api.dom('.spinner'), 'display: none');
+				$api.css($api.dom('.kong'), 'display:none');
+				$api.html($api.dom('#quns'), html);
+			} else {
+				$api.css($api.dom('.spinner'), 'display: none');
+				$api.html($api.dom('#quns'), '');
+				$api.css($api.dom('.kong'), 'display:block');
+			}
+		});
+
+
+	}
+
+	function join_qun(id, zh, tx, sm) {
+		var manager = '' //管理员id
+		api.ajax({
+			url: $api.getStorage('IPandPORT') + '/api/manager_id/',
+			method: 'get',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			data: {
+				body: {
+					group_id: id
+				}
+			}
+		}, function(ret, err) {
+			manager = ret[0]['user']['id']
+			alert(JSON.stringify(ret))
+			api.closeWin({});
+			api.openWin({
+				reload: true,
+				name: 'win_join_qun',
+				url: 'win_join_qun.html',
+				vScrollBarEnabled: false,
+				pageParam: {
+					qun_id: id,
+					qun_zh: zh,
+					qun_tx: tx,
+					qun_sm: sm,
+					glid: manager
+				}
+			});
+		})
+
+
+	}
+</script>
+
+</html> -->

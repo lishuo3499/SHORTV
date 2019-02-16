@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="../../css/api.css">
+    <link rel="stylesheet" href="../../css/aui.css">
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+</head>
+
+<body>
+    <header id="header" class="mui-bar mui-bar-nav" style="padding-top:20px;height:60px;">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" onclick="back()"></a>
+        <h1 class="mui-title">设置</h1>
+    </header>
+
+    <ul class="mui-table-view" style="margin-top:60px; position:static;">
+        <!-- <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">账号管理</a>
+        </li> -->
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right" onclick="change_user_data()">编辑资料</a>
+        </li>
+    </ul>
+
+    <ul class="mui-table-view" style="position:static;border-top:20px #F8F8F8 solid;">
+        <li class="mui-table-view-cell" style="">
+            <a class="mui-navigate-right">接收推送通知</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue " id="switch_0">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">未关注人私信</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue" id="switch_1">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">作品被评论</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue" id="switch_2">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">作品被赞</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue" id="switch_3">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">作品被转发</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue" id="switch_4">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">好友请求</a>
+            <div class="mui-switch mui-switch-mini mui-switch-blue" id="switch_5">
+                <div class="mui-switch-handle"></div>
+            </div>
+        </li>
+    </ul>
+    <ul class="mui-table-view" style="position:static;border-top:20px #F8F8F8 solid;">
+        <li class="mui-table-view-cell" style="">
+            <a class="mui-navigate-right">关于我们</a>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">联系客服</a>
+        </li>
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right" onclick="clear_data()">清除缓存</a>
+        </li>
+    </ul>
+    <div style="width:100%;text-align:center;"> <button type="button" class="mui-btn" onclick="tuichu()" style="width:98%;height:40px; margin:0 auto;">退出登录</button></div>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+    function back() {
+        api.closeFrame({});
+    }
+
+    apiready = function() {
+        var type = ['switch_0', 'switch_1', 'switch_2', 'switch_3', 'switch_4', 'switch_5']
+        for (var i = 0; i < type.length; i++) {
+            if ($api.getStorage(type[i]) == 1) {
+                $api.addCls($api.byId(type[i]), 'mui-active');
+            }
+        }
+    }
+
+
+    // 开关
+    var switch_btn = document.getElementsByClassName('switch_btn')
+    for (var i = 0; i < 6; i++) {
+        document.getElementById('switch_' + i).addEventListener("toggle", function(event) {
+            var type = ['switch_0', 'switch_1', 'switch_2', 'switch_3', 'switch_4', 'switch_5']
+            if (event.detail.isActive) {
+                $api.setStorage(event.target.id, '1')
+            } else {
+                $api.setStorage(event.target.id, '0')
+            }
+        })
+    }
+
+    function clear_data() {
+        api.toast({
+            msg: '清除成功',
+            duration: 3000,
+            location: 'bottom'
+        });
+    }
+
+
+
+
+
+
+    function tuichu() {
+        $api.clearStorage();
+        api.openWin({
+            bounces: false,
+            name: 'win_login',
+            url: '../../index.html',
+            vScrollBarEnabled: false
+        });
+    }
+
+    function change_user_data() {
+      api.openWin({
+          bounces: false,
+          name: 'change_user_data',
+          url: 'user_change_info.html',
+          vScrollBarEnabled: false
+      });
+    }
+</script>
+
+</html>

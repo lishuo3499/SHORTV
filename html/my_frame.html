@@ -1,0 +1,487 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="../css/aui.css" /> -->
+    <style>
+        html,
+        body {
+            height: 100%;
+            background-color: #f0f0f0;
+        }
+        /*角标*/
+
+        .aui-badge {
+            display: inline-block;
+            width: auto;
+            text-align: center;
+            min-width: 0.8rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
+            padding: 0 0.2rem;
+            font-size: 0.6rem;
+            color: #ffffff;
+            background-color: #ff2600;
+            border-radius: 0.4rem;
+            position: absolute;
+            top: 0.2rem;
+            left: 60%;
+            z-index: 99;
+            border: 2px #fff solid;
+        }
+
+        .h10 {
+            height: 10px;
+            background: #f0f0f0;
+        }
+
+        .h1 {
+            height: 1px;
+            margin-left: 15px;
+            background: #f0f0f0;
+        }
+
+        .fr {
+            float: right;
+        }
+
+        .hint {
+            color: #666;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .firstblock,
+        .secondblock,
+        .thirdblock {
+            background-color: #fff;
+        }
+
+        .loginbg {
+            width: 100%;
+        }
+
+        .login .personal_logo {
+            position: absolute;
+            top: 60px;
+            width: 64px;
+            height: 64px;
+            left: 20px;
+        }
+
+        .person_arrow {
+            position: absolute;
+            height: 20px;
+            right: 10px;
+            top: 90px;
+        }
+
+        .login .userinfo {
+            position: absolute;
+            top: 60px;
+            margin-left: 100px;
+        }
+
+        .login .userinfo .title {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .login .userinfo .subtitle {
+            font-size: 14px;
+            color: #fff;
+            border: 1px solid #fff;
+            display: inline-block;
+            padding: 3px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .item {
+            height: 50px;
+            line-height: 50px;
+            padding-left: 15px;
+            background-color: #fff;
+        }
+
+        .item_ico {
+            float: left;
+            width: 30px;
+            padding: 10px 10px 10px 0;
+        }
+
+        .item_arrow {
+            float: right;
+            width: 16px;
+            padding: 17px 15px 15px 0;
+        }
+
+        .item-hov {
+            background-color: #E8E8E8;
+        }
+        /*李硕消息界面css*/
+
+        .header_search {
+            line-height: 48px;
+            text-align: center;
+        }
+
+        .search_img {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+
+        .search_img_right {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .message_search {
+            display: flex;
+            justify-content: space-between;
+            height: 48px;
+            background-color: #fff;
+        }
+
+        .meg_text {
+            width: 20%;
+            font-size: 20px;
+        }
+
+        .header_search_add {
+            width: 20%;
+            display: flex;
+        }
+
+        .msg_bottom_border {
+            height: 2px;
+            width: 100%;
+            background-color: #D2D2D2;
+        }
+
+        .msg_about_me {
+            display: flex;
+            background-color: #fff;
+            height: 80px;
+            justify-content: space-between;
+        }
+
+        .msg_my_list {
+            line-height: 75px;
+            width: 25%;
+            text-align: center;
+        }
+
+        .msg_my_list img {
+            height: 30px;
+            margin-top: 10px;
+        }
+
+        .msg_my_list div {
+            line-height: 10px;
+            margin-top: -20px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 头部搜索栏 -->
+    <!-- <div class="message_search">
+        <div class="header_search header_search_add">
+            <img class="search_img" src="../image/messagePage/btn_search_highlight.png" alt="">
+        </div>
+        <div class="header_search meg_text">消息
+        </div>
+        <div class="header_search header_search_add">
+            <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt="" onclick="opensearch()">
+            <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt="">
+        </div>
+    </div> -->
+
+    <!-- <div class="msg_bottom_border">
+    </div> -->
+
+    <div class="msg_about_me">
+
+        <div class="msg_my_list" onclick="openlist('fensi',0,'粉丝')">
+            <div class="aui-badge" id='fensi_num' style="  display:none; position:absolute;left:15%;top:30px;padding-top:1px;height:10px;width:10px;   font-size: 11px;">0</div>
+            <img src="../image/messagePage/btn_fans_highlight.png" alt="">
+            <!-- <div class="aui-badge">88</div> -->
+            <div>粉丝
+                <!-- <div class="aui-badge">88</div> -->
+            </div>
+
+        </div>
+
+        <div class="msg_my_list" onclick="openlist('zan',1,'获赞')">
+            <div class="aui-badge" id='fav_num' style="  display:none; position:absolute;left:40%;top:30px;padding-top:1px;height:10px;width:10px;   font-size: 11px;">0</div>
+            <img src="../image/messagePage/btn_praise_highlight.png" alt="">
+            <div>收到赞</div>
+        </div>
+
+        <div class="msg_my_list" onclick="openlist('comment',2,'评论')">
+            <div class="aui-badge" id="comment_num" style="  display:none; position:absolute;left:64%;top:30px;padding-top:1px;height:10px;width:10px;   font-size: 11px;">0</div>
+            <img src="../image/messagePage/btn_comment_highlight.png" alt="">
+            <div>评论</div>
+        </div>
+
+        <div class="msg_my_list" onclick="openlist('atme',3,'转发')">
+            <div class="aui-badge" id='share_num' style="  display:none; position:absolute;left:90%;top:30px;padding-top:1px;height:10px;width:10px;   font-size: 11px;">0</div>
+            <img src="../image/messagePage/btn_@_highlight.png" alt="">
+            <div>转发</div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../script/jquery-1.7.2.min.js"></script>
+
+<script type="text/javascript">
+    var user_id = ''
+    apiready = function() {
+        user_id = $api.getStorage('id');
+        get_message()
+
+
+
+
+        var UIListView = api.require('UIListView');
+        UIListView.open({
+            rect: {
+                x: 0,
+                y: 80,
+                w: api.winWidth,
+                h: api.frameHeight
+            },
+            data: [{
+                uid: '1001',
+                imgPath: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4191548549,4162877403&fm=27&gp=0.jpg',
+                title: '官方消息',
+                subTitle: '欢迎来到短视频app',
+                remark: '2018-3-11',
+                icon: ''
+            }],
+            rightBtns: [{
+                bgColor: '#E74C3C',
+                activeBgColor: '#F66458',
+                width: 70,
+                title: '删除',
+                titleSize: 12,
+                titleColor: '#fff',
+                icon: '',
+                iconWidth: 20
+            }],
+            styles: {
+                borderColor: '#E6E7E7',
+                item: {
+                    bgColor: '#fff',
+                    activeBgColor: '#F5F5F5',
+                    height: 76,
+                    imgWidth: 40,
+                    imgHeight: 40,
+                    imgCorner: 4,
+                    placeholderImg: '',
+                    titleSize: 12.0,
+                    titleColor: '#000',
+                    subTitleSize: 12.0,
+                    subTitleColor: '#000',
+                    remarkColor: '#898989',
+                    remarkSize: 12,
+                    remarkIconWidth: 30
+                }
+            },
+            fixedOn: api.frameName
+        }, function(ret, err) { //这个函数点击就触发了
+            // 删除消息列表里面的内容
+            if (ret['btnIndex'] == 0) {
+                if (ret['index'] || ret['index'] == 0) {
+                    deleteitemmsg(ret['index'])
+                }
+            } else {
+                if (ret['index'] || ret['index'] == 0) { //点击消息框
+                    var UIListView = api.require('UIListView');
+                    UIListView.getDataByIndex({
+                        index: ret['index']
+                    }, function(ret, err) {
+                        if (ret) {
+
+                        } else {
+
+                        }
+                    });
+
+                }
+            }
+        });
+
+        // 消息列表下拉刷新
+        var UIListView = api.require('UIListView');
+        UIListView.setRefreshHeader({
+            loadingImg: 'widget://res/UIListView_arrow.png',
+            bgColor: '#F5F5F5',
+            textColor: '#8E8E8E',
+            textDown: '下拉可以刷新...',
+            textUp: '松开开始刷新...',
+            showTime: true
+        }, function(ret, err) {
+            get_message()
+                //请求数据
+
+            // 获取新数据填充列表
+            var UIListView = api.require('UIListView');
+            UIListView.reloadData({
+                data: [{
+                    uid: '1001',
+                    imgPath: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=4191548549,4162877403&fm=27&gp=0.jpg',
+                    title: '官方消息',
+                    subTitle: '欢迎来到短视频app',
+                    remark: '2018-3-11',
+                    icon: ''
+                }]
+            }, function(ret) {
+                if (ret['index'] || ret['index'] == 0) { //点击消息框
+                    api.openWin({
+                        name: 'chatpage',
+                        url: 'chat/chat_page.html',
+                        pageParam: {
+                            name: 'test'
+                        }
+                    });
+                }
+            });
+            if (ret) {
+            } else {
+            }
+        });
+
+
+
+
+    };
+
+
+    // 删除列表对应消息
+    function deleteitemmsg(i) {
+        var UIListView = api.require('UIListView');
+        UIListView.deleteItem({
+            index: i
+        }, function(ret, err) {
+
+        });
+    }
+
+    // 打开搜索界面
+    function opensearch() {
+        api.openWin({
+            name: 'search',
+            url: 'search.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+
+
+
+    // 打开粉丝赞列表
+    function openlist(page, index, types) {
+        var type = ['1', '01', '4', '3', '4', '5']
+        clean_num(type[index])
+        get_message()
+        api.openFrame({
+            name: 'chatpage_header',
+            url: 'chat/header.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 60
+            },
+            pageParam: {
+                name: types
+            }
+        });
+        api.openFrame({
+            name: page,
+            url: 'chat/' + page + '.html',
+            rect: {
+                x: 0,
+                y: 60,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                name: 'test'
+            },
+            bgColor: '#fff'
+        });
+
+
+    }
+
+
+    function clean_num(i) {
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/api/set_new_to_old/',
+            method: 'post',
+            data: {
+                values: {
+                    user_id: user_id,
+                    type_notice: i
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+            } else {
+            }
+        })
+    }
+
+    var friend = [],
+        fav = [],
+        comment = []
+
+    function get_message() {
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/api/new_or_not/',
+            method: 'get',
+            data: {
+                values: {
+                    user_id: user_id
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+                // alert(JSON.stringify(ret))
+                var data = ['#fensi_num', '#fav_num', '#comment_num', '#share_num']
+                type = ['关注次数', '点赞次数', '评论次数', '分享次数']
+                for (var i = 0; i < data.length; i++) {
+                  if (ret[type[i]]==0) {
+                    $(data[i]).hide()
+                  }else {
+                      $(data[i]).show()
+                      $(data[i]).text(ret[type[i]])
+
+                  }
+                }
+
+            } else {
+                api.alert({
+                    msg: '失败'
+                });
+            }
+        });
+    }
+</script>
+
+</html>

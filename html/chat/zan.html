@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>APICloud App</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-flex-flow: column;
+            flex-flow: column;
+            font-family: "Microsoft Yahei"
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            text-decoration: none
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .main {
+            /*   min-width: 320px;
+            background: #edefee;
+            height: auto;*/
+            /*padding-bottom: 20px;*/
+        }
+
+        .main .logo {
+            height: 40px;
+            width: 100%;
+            background: #353b44;
+        }
+
+        .main .logo .img {
+            width: 90px;
+            line-height: 30px;
+            margin: 0px auto;
+        }
+
+        .main .logo img {
+            width: 100%;
+        }
+
+        .index {
+            /*margin: 10px 10px 5px 10px;*/
+            background: #ffffff;
+            /*box-shadow: 1px 1px 3px #CCC;*/
+            padding: 30px 10px;
+            /*border-radius: 5px;*/
+            border-bottom: 1px #EDECEC solid;
+            position: relative;
+        }
+
+        .index .index_box .icon_h {
+            float: left;
+            margin-right: 15px;
+        }
+
+        .index .index_box .titl {
+            overflow: hidden;
+        }
+
+        .index .index_box .titl h1 {
+            font-size: 16px;
+            margin: 7px 0;
+            text-decoration: none
+        }
+
+        .index .index_box .titl_h {
+            color: #666;
+        }
+
+        .index .index_box .titl_h i span {
+            color: #666;
+            float: right
+        }
+
+        .index .index_box .titl_h floor {
+            margin-left: 10px;
+        }
+
+        .index .index_box .titl_h floor span {
+            color: #F00
+        }
+
+        .header_img {
+            height: 40px;
+            border-radius: 1em;
+            margin-top: 0px;
+        }
+
+        time {
+            font-size: 10px;
+        }
+
+        .user_name {
+            font-size: 15px;
+            color: black;
+            font-weight: bolder;
+        }
+
+        .attention {
+            font-size: 14px;
+            color: #6E6D6C;
+        }
+
+        .zan_image {
+            height: 80px;
+            float: right;
+            margin-top: -50px;
+            width: 80px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+
+
+
+<body>
+
+
+    <script id="template_zan" type="text/html">
+        {{each list value i}}
+        <div class="index">
+            <div class="index_box">
+                <div class="index_icon">
+                    <div class="icon_h"><img src="{{value['send_user']['header_url'] }}" class="header_img"></div>
+                    <div class="titl" style="width: 50%">
+                        <div> <span class="user_name">@</span><span class="user_name">{{value['send_user']['nick_name'] }}</span> <span class="attention">赞了你</span></div>
+                        <div class="titl_h">
+                            <time title="#">{{value['created_time']}}</time>
+                        </div>
+                    </div>
+                    <img class="zan_image" src="{{value['video']['image_url'] }}" alt="">
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+    <div class="main" id="main">
+    </div>
+</body>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+    var attention_btn = $api.domAll('.attention_btn');
+    for (var i = 0; i < attention_btn.length; i++) {
+        $api.addEvt(attention_btn[i], 'click', function() {
+            if (this.innerHTML == '关注') {
+                this.innerHTML = '取消关注'
+            } else {
+                this.innerHTML = '关注'
+            }
+        });
+    }
+
+    var user_id = ''
+    apiready = function() {
+        user_id = $api.getStorage('id');
+      get_zan_data()
+    }
+
+
+
+    function get_zan_data() {
+      api.ajax({
+          url: $api.getStorage('IPandPORT') + '/api/show_one_type_notice/',
+          method: 'get',
+          data: {
+              values: {
+                  user_id: user_id,
+                  type_notice: '0'
+              }
+
+          }
+      }, function(ret, err) {
+          if (ret) {
+
+              var data = {
+                  list: ret
+              };
+              var html = template('template_zan', data);
+              document.getElementById('main').innerHTML = html;
+          } else {
+                api.alert({
+                  msg: JSON.stringify(err)
+              });
+          }
+      });
+    }
+</script>
+
+</html>

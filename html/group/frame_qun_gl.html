@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+		<style type="text/css">
+			.aui-list-item.wechat-top {
+				background-color: #f3f3f7;
+			}
+			.aui-list .wechat-avatar {
+				width: 3rem;
+			}
+			.wechat-avatar .aui-row-padded {
+				background-color: #dddee0;
+				padding: 0.1rem;
+				border-radius: 0.2rem;
+				margin-left: -0.05rem;
+				margin-right: -0.05rem;
+			}
+			.wechat-avatar, .wechat-avatar > img {
+				border-radius: 0.4rem;
+			}
+			.aui-list {
+				border-top: none;
+			}
+			@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+				.aui-list {
+					border: none;
+					background-size: 100% 0px;
+				}
+			}
+			.kong {
+				height: 9rem;
+				background-image: url(../res/e.png);
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-size: 8rem;
+				position: relative;
+				top: 3rem;
+				display: none
+			}
+			.kong_wz {
+				position: relative;
+				top: 8rem;
+				text-align: center;
+				font-size: 0.85rem;
+				color: #A1A1A1
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-content aui-margin-b-15">
+			<ul class="aui-list aui-media-list" id="quns"></ul>
+		</div>
+		<div class="kong">
+			<div class="kong_wz">
+				没有找到该群
+			</div>
+		</div>
+		<div class="spinner">
+			<div class="bounce1"></div>
+			<div class="bounce2"></div>
+			<div class="bounce3"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js" ></script>
+	<script type="text/javascript" src="../../script/group/aui-dialog.js" ></script>
+	<script type="text/javascript">
+		apiready = function() {
+			qun_list();
+			api.addEventListener({
+				name : 'ok'
+			}, function(ret, err) {
+				api.toast({
+					msg : '群组创建成功',
+					duration : 3000,
+					location : 'bottom'
+				});
+				qun_list();
+			});
+			function qun_list() {
+				var html = '';
+				var query = api.require("query");
+				$api.css($api.dom('.spinner'), 'display: block');
+				query.createQuery(function(ret, err) {
+					if (ret && ret.qid) {
+						var queryId = ret.qid;
+						query.limit({
+							qid : queryId,
+							value : "20"
+						});
+						query.desc({
+							qid : queryId,
+							column : 'createdAt'
+						});
+						var model = api.require("model");
+						model.findAll({
+							class : "qun",
+							qid : queryId
+						}, function(ret, err) {
+							if (ret.length > 0) {
+								for (var i = 0; i < ret.length; i++) {
+									$api.css($api.dom('.loader'), 'display:none');
+									html += '<li class="aui-list-item aui-list-item-middle" tapmode>';
+									html += '<div class="aui-media-list-item-inner">';
+									html += '<div class="aui-list-item-media" style="width: 2.4rem;">';
+									html += '<img src="' + ret[i].qun_tx + '" class="aui-img-round aui-list-img-sm"></div>';
+									html += '<div class="aui-list-item-inner aui-list-item-arrow">' + ret[i].qun_zh + '</div></div></li>';
+									$api.css($api.dom('.spinner'), 'display: none');
+									$api.html($api.dom('#quns'), html);
+								}
+							} else {
+								$api.css($api.dom('.spinner'), 'display: none');
+								$api.css($api.dom('.kong'), 'display:block');
+							}
+						});
+					}
+				});
+			}
+
+		}
+	</script>
+</html>

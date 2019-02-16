@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <style media="screen">
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .header_search {
+            line-height: 48px;
+            text-align: center;
+        }
+
+        .search_img {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+
+        .search_img_right {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .message_search {
+            display: flex;
+            justify-content: space-between;
+            height: 48px;
+            background-color: #fff;
+            /*background-color: red;*/
+        }
+
+        .meg_text {
+            width: 20%;
+            font-size: 16px;
+        }
+
+        .header_search_add {
+            width: 20%;
+            display: flex;
+        }
+
+        .back_btn {
+            color: black;
+            padding-left: 10px;
+        }
+
+        .search_btn {
+            color: black;
+            width: 100%;
+            padding-right: 10px;
+            text-align: right;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="" style="height:20px;  background-color: #fff;"> </div>
+    <div class="message_search">
+        <div class="header_search header_search_add">
+            <div class="back_btn" onclick="guanbi()">返回</div>
+        </div>
+        <div class="header_search meg_text" id="meg_text">
+        </div>
+        <div class="header_search header_search_add">
+            <!-- <div class="search_btn" onclick="tuichu()">搜索</div>
+             <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt="" onclick="opensearch()">
+            <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt=""> -->
+        </div>
+    </div>
+
+    <script type="text/javascript" src="../../script/api.js"></script>
+    <script type="text/javascript">
+        apiready = function() {
+            var header_title = api.pageParam['name']
+            var attention_btn = $api.byId('meg_text')
+            $api.text(attention_btn, header_title);
+        }
+
+
+
+        function guanbi() {
+          var data ={'粉丝':'fensi','获赞':'zan','评论':'comment','转发':'atme'}
+          api.closeFrame({
+              name: 'address_video'
+          });
+            var attention_btn = $api.byId('meg_text')
+            api.closeFrame({
+                name: data[$api.text(attention_btn)]
+            });
+
+            api.closeFrame({
+                name: 'chatpage_header'
+            });
+
+        }
+    </script>
+
+</body>
+
+</html>

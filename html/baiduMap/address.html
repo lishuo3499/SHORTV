@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style media="screen">
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .header_search {
+            line-height: 70px;
+            text-align: center;
+        }
+
+        .search_img {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+
+        .search_img_right {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .message_search {
+            display: flex;
+            justify-content: space-between;
+            height: 70px;
+            background-color: #fff;
+            /*background-color: red;*/
+        }
+
+        .meg_text {
+            width: 20%;
+            font-size: 20px;
+        }
+
+        .header_search_add {
+            width: 20%;
+            display: flex;
+        }
+
+        .back_btn {
+            color: black;
+            padding-left: 10px;
+            margin-top: 15px;
+        }
+
+        .search_btn {
+            color: black;
+            width: 100%;
+            padding-right: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="message_search">
+        <div class="header_search header_search_add">
+            <div class="back_btn" onclick="back()">返回</div>
+        </div>
+        <div class="header_search meg_text" id="meg_text">
+        </div>
+        <div class="header_search header_search_add">
+            <!-- <div class="search_btn" onclick="tuichu()">搜索</div>
+           <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt="" onclick="opensearch()">
+          <img class="search_img_right" src="../image/messagePage/btn_friend_highlight.png" alt=""> -->
+        </div>
+    </div>
+
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script>
+    function back() {
+
+        api.closeFrame({
+            name: 'address_video'
+        });
+        api.closeFrame({
+            name: 'address',
+        });
+
+    }
+    apiready = function() {
+      //  alert(api.pageParam['e'])
+        console.log(api.pageParam['e'])
+        console.log(api.pageParam['n'])
+        var bMap = api.require('bMap');
+        bMap.getLocation({
+            accuracy: '100m',
+            autoStop: true,
+            filter: 1
+        }, function(ret, err) {
+            if (ret.status) {
+                console.log(JSON.stringify(ret));
+
+                var map = api.require('bMap');
+                map.open({
+                    rect: {
+                        x: 0,
+                        y: 70,
+                        w: 'auto',
+                        h: 150
+                    },
+                    center: {
+                        lat: api.pageParam['e'],
+                        lon: api.pageParam['n']
+                    },
+                    zoomLevel: 10,
+                    showUserLocation: true,
+                    fixedOn: api.frameName,
+                    fixed: true
+                }, function(ret) {
+                    if (ret.status) {
+                        // alert('地图打开成功');
+                    }
+                });
+            } else {
+                // alert(err.code);
+            }
+        });
+
+        // alert(api.frameHeight)
+        api.openFrame({
+            name: 'address_video',
+            url: 'address_video.html',
+            rect: {
+                x: 0,
+                y: 212,
+                w: 'auto',
+                h: api.frameHeight - 210
+            },
+            pageParam: {
+                e: api.pageParam['e'],
+                n: api.pageParam['n']
+            },
+            bgColor: 'rgba(0,0,0,0)'
+        });
+    }
+</script>
+
+</html>

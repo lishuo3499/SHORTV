@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+废弃的好友列表
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style type="text/css">
+
+	</style>
+</head>
+
+<body>
+
+<!-- <div onclick="qun_add()">创建群聊</div> -->
+	<div class="aui-searchbar" id="search">
+		<div class="aui-searchbar-input aui-border-radius" tapmode onclick="opensearch()">
+			<i class="aui-iconfont aui-icon-search"></i>
+			<form action="javascript:search();">
+				<input type="search" placeholder="请输入搜索内容" id="search-input">
+			</form>
+		</div>
+
+	</div>
+</body>
+<script type="text/javascript" src="../../script/chat/api.js"></script>
+<script type="text/javascript">
+	user_id = $api.getStorage('id')
+	my_friends = $api.getStorage('my_friends')
+	var friend_data = []
+
+	apiready = function() {
+
+		get_friend_data(user_id)  //更新好友列表
+		// var inter = setTimeout(function() {
+			var UIListView = api.require('UIListView');  //加载好友列表
+			UIListView.open({
+				rect: {
+					x: 0,
+					y: 44,
+					w: api.winWidth,
+					h: api.frameHeight
+				},
+				data: $api.getStorage('my_friends'),
+				rightBtns: [{
+					bgColor: '#E74C3C',
+					activeBgColor: '#F66458',
+					width: 70,
+					title: '删除',
+					titleSize: 12,
+					titleColor: '#fff',
+					icon: '',
+					iconWidth: 20
+				}],
+				styles: {
+					borderColor: '#E6E7E7',
+					item: {
+						bgColor: '#fff',
+						activeBgColor: '#F5F5F5',
+						height: 70,
+						imgWidth: 40,
+						imgHeight: 40,
+						imgCorner: 4,
+						placeholderImg: '',
+						titleSize: 16.0,
+						titleColor: '#000',
+						subTitleSize: 12.0,
+						subTitleColor: '#000',
+						remarkColor: '#898989',
+						remarkSize: 12,
+						remarkIconWidth: 30
+					}
+				},
+				fixedOn: api.frameName
+			}, function(ret, err) { //这个函数点击就触发了
+				// 删除消息列表里面的内容
+				if (ret['btnIndex'] == 0) {
+					if (ret['index'] || ret['index'] == 0) {
+						deleteitemmsg(ret['index'])
+					}
+				} else {
+					if (ret['index'] || ret['index'] == 0) { //点击消息框
+						var UIListView = api.require('UIListView');
+						UIListView.getDataByIndex({
+							index: ret['index']
+						}, function(ret, err) {
+							if (ret) {
+								li(ret['data']['uid'], ret['data']['title'], ret['data']['imgPath']) //进入聊天窗口
+							} else {
+								alert(JSON.stringify(err));
+							}
+						});
+
+					}
+				}
+			});
+		// }, 1000)
+
+
+
+		// 好友列表下拉刷新
+		var UIListView = api.require('UIListView');
+		UIListView.setRefreshHeader({
+			loadingImg: 'widget://res/UIListView_arrow.png',
+			bgColor: '#F5F5F5',
+			textColor: '#8E8E8E',
+			textDown: '下拉可以刷新...',
+			textUp: '松开开始刷新...',
+			showTime: true
+		}, function(ret, err) {
+			// $api.rmStorage('my_friends')
+			get_friend_data(user_id)
+		var inter = setTimeout(function() {
+			var UIListView = api.require('UIListView');
+			UIListView.reloadData({
+				data: $api.getStorage('my_friends')
+			}, function(ret) {
+				// alert(JSON.stringify($api.getStorage('my_friends')))
+			});
+	}, 1000)
+			if (ret) {
+				// alert(JSON.stringify(ret));
+			} else {
+				// alert(JSON.stringify(err));
+			}
+		});
+	};
+
+
+
+// 刷新本地好友数据
+	function get_friend_data(i) {
+		api.ajax({
+			url: $api.getStorage('IPandPORT') + '/api/friends_list/',
+			method: 'get',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			data: {
+				body: {
+					user_id: i
+				}
+			}
+		}, function(ret, err) {
+			if (ret) {
+				friend_data = []
+				for (var i = 0; i < ret.length; i++) {
+					var firend = {
+						uid: ret[i]['my_friend']['id'],
+						imgPath: ret[i]['my_friend']['header_url'],
+						title: ret[i]['my_friend']['nick_name'],
+						subTitle: '欢迎来到短视频app',
+					}
+					friend_data.push(firend)
+				}
+				$api.setStorage('my_friends', friend_data);
+			} else {
+				alert(JSON.stringify(err))
+			}
+		});
+	}
+
+
+	function opensearch() {
+		api.openWin({
+			name: 'search',
+			url: '../search.html',
+			pageParam: {
+				name: 'test'
+			}
+		});
+	}
+
+
+	// 删除列表对应消息
+	function deleteitemmsg(i) {
+		var UIListView = api.require('UIListView');
+		UIListView.deleteItem({
+			index: i
+		}, function(ret, err) {
+			// if (ret) {
+			//     alert(JSON.stringify(ret));
+			// } else {
+			//     alert(JSON.stringify(err));
+			// }
+		});
+	}
+
+	// 打开搜索界面
+	function opensearch() {
+		api.openWin({
+			name: 'search_group',
+			url: '../group/win_search.html',
+			pageParam: {
+				name: 'test'
+			}
+		});
+	}
+
+
+
+	// }
+	// 打开对应联系人聊天窗口
+	function li(id, xm, tx) {
+		api.openWin({
+			reload: true,
+			name: 'win_lt',
+			url: 'win_lt.html',
+			pageParam: {
+				id: id,
+				xm: xm,
+				tx: tx
+			},
+			vScrollBarEnabled: false,
+		});
+	}
+
+	function qun_add() {
+		api.openWin({
+			bounces : false,
+			name : 'win_qun_add',
+			url : '../group/create_group.html',
+			vScrollBarEnabled : false
+		});
+	}
+</script>
+
+</html>

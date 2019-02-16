@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+	<style type="text/css">
+		.aui-bar-nav {
+			background-color: #fff;
+		}
+
+		.aui-bar-tab-label {}
+	</style>
+</head>
+
+<body style="height:640px;">
+	<!-- 人对人发消息界面 frame_chat -->
+	<!--新消息界面 frame_xxhh -->
+
+
+	<header class="aui-bar aui-bar-nav" id="head">
+		最新消息
+	</header>
+	<script id="xx" type="text/html">
+		<%if(aa>0) { %>
+			<div class="aui-badge">
+				<%=aa%>
+			</div>
+
+			<div class="aui-bar-tab-label" style="font-size: 16px;">
+				消 息
+			</div>
+			<%}else{%>
+
+				<div class="aui-bar-tab-label" style="font-size: 16px;">
+					消 息
+				</div>
+				<%}%>
+	</script>
+
+
+	<footer class="aui-bar aui-bar-tab" id="footer" style="position:absolute;top:20px;">
+		<div class="aui-bar-tab-item xx"></div>
+
+		<div class="aui-bar-tab-item " tapmode>
+
+			<div class="aui-bar-tab-label" style="font-size: 16px;">
+				好 友
+			</div>
+		</div>
+		<div class="aui-bar-tab-item" tapmode>
+
+			<div class="aui-bar-tab-label" style="font-size: 16px;">
+				动 态
+			</div>
+		</div>
+	</footer>
+</body>
+<script type="text/javascript" src="../../script/group/api.js"></script>
+<script type="text/javascript" src="../../script/group/aui-tab.js"></script>
+<script type="text/javascript" src="../../script/group/dcc.js"></script>
+<script type="text/javascript">
+	apiready = function() {
+			api.sendEvent({
+				name: 'myEvent',
+				extra: {
+					key1: 'value1',
+					key2: 'value2'
+				}
+			});
+			api.parseTapmode();
+			$api.fixStatusBar($api.dom('header'));
+			$api.setStorage('group_or_friend', 0); //打开好友还是群组
+			// var head_h = $api.offset($api.dom('header')).h;
+			var body_h = $api.offset($api.dom('body')).h;
+			var foot_h = $api.offset($api.dom('footer')).h;
+			var rect_h = body_h - foot_h;
+			//返回键单击监听
+			api.addEventListener({
+				name: 'keyback'
+			}, function(ret, err) {
+				api.toast({
+					msg: '再点一哈退出应用',
+					duration: 2000,
+					location: 'bottom'
+				});
+				api.addEventListener({
+					name: 'keyback'
+				}, function(ret, err) {
+					api.closeWidget({
+						silent: true
+					});
+				});
+				setTimeout(function() {
+					exitApp();
+				}, 2000)
+			});
+			//融云初始化
+			var rong = api.require('rongCloud2');
+			rong.init(function(ret, err) {
+				if (ret.status == 'success') {
+					api.toast({
+						msg: '服务器连接成功'
+					});
+					//消息监听
+					jt();
+					rong.connect({
+						token: $api.getStorage('token')
+					}, function(ret, err) {
+						console.log("token:" + $api.getStorage('token'));
+					});
+				} else {
+					api.toast({
+						msg: '服务器连接失败'
+					});
+				}
+			});
+
+			rong.getTotalUnreadCount(function(ret, err) {
+				if (ret) {
+					var data = {
+						aa: ret.result
+					}
+					$api.dom('.xx').innerHTML = dcc('xx', data);
+				}
+			})
+			api.addEventListener({
+				name: 'xxs'
+			}, function(ret, err) {
+				rong.getTotalUnreadCount(function(ret, err) {
+					if (ret) {
+						console.log('消息数' + ret.result + JSON.stringify(ret));
+						var data = {
+							aa: ret.result
+						}
+						$api.dom('.xx').innerHTML = dcc('xx', data);
+					}
+				})
+			});
+
+
+
+			// open_group_page(0)
+			// $api.setStorage('which_page', 0);
+
+		}
+		//融云消息监听器
+	function jt() {
+		var rong = api.require('rongCloud2');
+		rong.setOnReceiveMessageListener(function(ret, err) {
+			if (ret) {
+				// 消息未读数小红点
+				api.sendEvent({
+					name: 'xxs'
+				});
+				api.sendEvent({
+					name: 'hhxx'
+				});
+				api.sendEvent({
+					name: 'new_msg',
+					extra: {
+						msg: ret.result.message
+					}
+				})
+			}
+		})
+	}
+
+
+
+
+	//底部按钮切换
+	var tab = new auiTab({
+		element: document.getElementById("footer")
+	}, function(ret) {
+		var id = ret.index - 1;
+
+		var html = '';
+		if (id == 0) {
+			// $api.byId('head').innerHTML = '最新消息';
+			open_group_page(0)
+			$api.setStorage('which_page', 0);
+			api.sendEvent({ //关闭消息列表页面
+				name: 'close_list'
+			});
+		}
+		if (id == 1) {
+			open_group_page(1)
+			$api.setStorage('which_page', 1);
+			if ($api.getStorage('group_or_friend') == 0) {
+				api.sendEvent({
+					name: 'show_list'
+				});
+			}
+			html += '<a class="aui-pull-left aui-btn"></a> ';
+			html += '<div class="aui-title">联系人</div>';
+			html += '<a class="aui-pull-right aui-btn" tapmode onclick="add_qun()">添加</a>';
+			$api.html($api.byId('head'), html);
+		}
+		if (id == 2) {
+			api.sendEvent({
+				name: 'close_list'
+			});
+			open_group_page(2)
+			$api.setStorage('which_page', 2);
+		}
+
+	});
+
+	//打开页面
+	function open_group_page(i) {
+		var body_h = $api.offset($api.dom('body')).h;
+		var foot_h = $api.offset($api.dom('footer')).h;
+		var rect_h = body_h - foot_h;
+		var frame_name = ['msg', 'friends', 'site'],
+			frame_html = ['frame_hhxx', 'frame_friends', '../my_frame']
+		api.openFrame({
+			name: frame_name[i],
+			url: frame_html[i] + '.html',
+			rect: {
+				x: 0,
+				y: 70,
+				w: 'auto',
+				h: api.frameHeight - 70
+			},
+			pageParam: {},
+			animation: {
+				type: "fade",
+				subType: "from_right",
+				duration: 100
+			}
+
+		});
+		api.bringFrameToFront({
+			from: 'footer',
+		});
+	}
+
+
+	function exitApp() {
+		api.addEventListener({
+			name: 'keyback'
+		}, function(ret, err) {
+			api.toast({
+				msg: '再点一哈退出应用',
+				duration: 2000,
+				location: 'bottom'
+			});
+			api.addEventListener({
+				name: 'keyback'
+			}, function(ret, err) {
+				api.closeWidget({
+					silent: true
+				});
+			});
+			setTimeout(function() {
+				exitApp();
+			}, 2000)
+		});
+	}
+</script>
+
+</html>

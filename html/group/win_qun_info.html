@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<style type="text/css">
+			.user-info {
+				background-color: #ffffff;
+				padding: 0.75rem 0;
+			}
+			h2 {
+				color: #373737;
+				font-size: 0.9rem;
+			}
+			#gz {
+				color: #494949;
+				font-size: 0.85rem;
+			}
+			#lt {
+				color: #494949;
+				font-size: 0.85rem;
+			}
+			img.avatar {
+				display: block;
+				margin: 0 auto;
+				width: 20%;
+			}
+			.aui-list .aui-list-header {
+				background-color: #ffffff;
+				line-height: 1.2rem;
+			}
+			.aui-list .aui-list-item-title {
+				color: #494949;
+			}
+			.aui-list {
+				border-top: none;
+			}
+			@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+				.aui-list {
+					border: none;
+					background-size: 100% 0px;
+				}
+			}
+			.aui-list .wechat-avatar {
+				width: 2rem;
+			}
+			.wechat-avatar .aui-row-padded {
+				background-color: #dddee0;
+				padding: 0.1rem;
+				border-radius: 0.2rem;
+				margin-left: -0.05rem;
+				margin-right: -0.05rem;
+			}
+			.wechat-avatar, .wechat-avatar > img {
+				border-radius: 0.4rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav">
+			<a class="aui-pull-left aui-btn" onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+			<div class="aui-title">
+				群组信息
+			</div>
+		</header>
+		<section class="aui-content user-info aui-text-center aui-margin-b-15">
+			<img src="../res/tx.jpg" class="avatar aui-img-round" id="qun_tx">
+			<h2 class="aui-margin-t-15" id="qun_zh" tapmode onclick="lt()">川哥哥</h2>
+			<div class="aui-row aui-margin-t-15">
+				<div class="aui-col-xs-6 aui-text-right aui-border-r aui-padded-r-10"  id="tj">
+					<span class="aui-iconfont aui-icon-like"></span> 成员0人
+				</div>
+				<div class="aui-col-xs-6 aui-text-left aui-padded-l-10" tapmode onclick="lt()" id="lt">
+					<span class="aui-iconfont aui-icon-note aui-text-danger"></span> 修改
+				</div>
+			</div>
+		</section>
+		<ul class="aui-list aui-list-in aui-margin-b-15" id="qun_list">
+
+		</ul>
+		<input type="hidden"  id="isgz"/>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js" ></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.parseTapmode();
+			$api.fixStatusBar($api.dom('header'));
+			$api.byId('qun_zh').innerHTML = api.pageParam.qun_zh;
+			$api.byId('qun_tx').src = api.pageParam.qun_tx;
+			qun_list();
+			api.addEventListener({
+				name : 'ok'
+			}, function(ret, err) {
+				qun_list();
+			});
+		}
+
+		function qun_list() {
+			var html = '';
+			var query = api.require("query");
+			$api.css($api.dom('.spinner'), 'display: block');
+			query.createQuery(function(ret, err) {
+				if (ret && ret.qid) {
+					var queryId = ret.qid;
+					query.whereEqual({
+						qid : queryId,
+						column : 'qun_id',
+						value : api.pageParam.qun_id
+					});
+					query.desc({
+						qid : queryId,
+						column : 'createdAt'
+					});
+					var model = api.require("model");
+					model.findAll({
+						class : "qun_user",
+						qid : queryId
+					}, function(ret, err) {
+						if (ret.length > 0) {
+						    $api.byId('tj').innerHTML = '<span class="aui-iconfont aui-icon-like"></span> 成员共计 ：'+ret.length+' 人';
+							for (var i = 0; i < ret.length; i++) {
+								$api.css($api.dom('.loader'), 'display:none');
+								html += '<li class="aui-list-item aui-list-item-middle" tapmode onclick="join(' + ret[i].uid + ',' + "'" + ret[i].tx + "'" + ',' + "'" + ret[i].zh + "'" + ')">';
+								html += '<div class="aui-media-list-item-inner">';
+								html += '<div class="aui-list-item-media wechat-avatar"><img src="' + ret[i].tx + '" /></div>';
+								html += '<div class="aui-list-item-inner">';
+								html += '<div class="aui-list-item-text">';
+								html += '<div class="aui-list-item-title">' + ret[i].zh + '</div></div>';
+								html += '</div></div></li>';
+								$api.css($api.dom('.spinner'), 'display: none');
+								$api.html($api.dom('#qun_list'), html);
+							}
+						} else {
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.css($api.dom('.kong'), 'display:block');
+						}
+					});
+				}
+			});
+		}
+		function back() {
+			api.closeWin({
+			});
+		}
+	</script>
+</html>

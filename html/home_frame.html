@@ -1,0 +1,909 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>APICloud App</title>
+    <!-- <link rel="stylesheet" type="text/css" href="../css/api.css" /> -->
+    <link rel="stylesheet" href="../css/swiper.min.css">
+    <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/dianzan/style.css" />
+    <link rel="stylesheet" href="../css/mui/mui.min.css">
+    <script type="text/javascript" src="../css/mui/mui.min.js"></script>
+
+
+    <style>
+        * {
+            /*color: #fff;*/
+        }
+
+        html,
+        body {
+            position: relative;
+            height: 100%;
+        }
+
+        body {
+            background: rgba(0, 0, 0, 0);
+            font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            /*color: #000;*/
+            margin: 0;
+            padding: 0;
+        }
+
+        .swiper-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .swiper-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+            /* Center slide text vertically */
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+
+        .video_start {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .content_box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            text-align: left;
+            /*background-color: #456;*/
+        }
+
+        .box1 {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 70px;
+            /*height: 40%;*/
+            width: 40px;
+            font-size: 10px;
+            z-index: 999
+        }
+
+        .box1>div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px
+        }
+
+        .box1 img {
+            width: 30px;
+            margin-bottom: 10px;
+        }
+
+        .box1 span,
+        .box1 img {
+            display: block;
+        }
+
+        .user_header {
+            margin: 0 0 -10px 0!important;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .user_header img {
+            width: 40px!important;
+            height: 40px!important;
+        }
+
+        .add {
+            margin-top: -20px;
+            background: url(../image/youji.png);
+        }
+
+        .box2 {
+            position: absolute;
+            left: : 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            margin-left: 15px;
+            margin-bottom: 70px;
+            width: 70%;
+            font-size: 13px;
+            z-index: 999;
+        }
+
+        .user_name {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .address {
+            margin-bottom: 10px
+        }
+
+        .describe {
+            opacity: 0.8;
+            overflow: hidden;
+            /*white-space: nowrap;*/
+            display:-webkit-box;
+            -webkit-box-orient:vertical;
+            -webkit-line-clamp:2;
+            text-overflow: ellipsis;
+        }
+
+        .note_body {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+        }
+
+        .note_title {
+            color: #37302F;
+            display: block;
+            margin: 0 auto;
+            font-size: 18px;
+        }
+
+        .note_img_icon {
+            height: 13px;
+            margin-top: -3px;
+        }
+
+        .dianzan_num {
+            padding-top: 5px;
+        }
+
+        span,
+        p {
+            color: #fff;
+        }
+
+        .address_logo_img {
+            font-size: 12px;
+        }
+        .stop_img{
+           position:absolute;left:50%;top:50%;margin-left:-50px;margin-top:-70px; height:100px;display: none;
+        }
+        .home_img{
+          /*height: 40px;*/
+          /*width: 550px;*/
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <script id="interpolationtmpl" type="text/html">
+        {{each list value i}}
+        <div class="swiper-slide">
+            <div class="content_box">
+                <img src="../image/stop_play.png" alt="" class="stop_img">
+                {{if value['position']['lon']==-9}} {{else}}
+                <div class="address_logo" style="position:absolute;z-index:9000;text-align:center;width:100%;">
+                    <img src="../image/address_logo.png" onclick="open_baidu_map(this.id)" id='{{value['position']['lat']}} {{value['position']['lon']}}' class='address_logo_img' style=' height:30px; display:block;margin:0 auto; margin-top:100px;opacity:1;' alt="">
+                    <div style="width:100%; text-align:center;opacity:1; font-size:16px;" class='address_logo_img'><span>{{value['position']['name']}}</span></div>
+                    <div style="width:100%; text-align:center;opacity:1;" class='address_logo_img'><span style="color:#E1E2E3;">N{{value['position']['lat'].toFixed(2)}}° , E{{value['position']['lon'].toFixed(2)}}°</span></div>
+                </div>
+                {{/if}}
+                <div class="box1  user_header_{{value['user']['id']}}">
+                    <div onclick="open_note('{{value['food']}}','{{ value['traffic']}}','{{ value['docm']}}')"><img class='home_img' src="../image/youji.png" /><span></span></div>
+                    <div><img onclick="share(this)" name = "{{value['id']}}" class='home_img' src="../image/fenxiang.png" /><span class="fenxiang_num_{{value['id']}}">{{ value['forwarding_num']}}</span></div>
+                    <div onclick="comment({{ value['id']}},this)"><img class='home_img' src="../image/pinglun.png" /><span class="pinglun_num" id="comment_{{ value['id']}}">{{ value['comment_num']}}</span></div>
+                    <div>
+                        {{if already.indexOf(i)==-1}}
+                        <body class="box" style="background:#789">
+                            <div class="feed" id="feed1">
+                                <div class="heart" id="like_{{value['id']}}" rel="like" style="background-position: left center;" name = "{{value['id']}}"></div>
+                            </div>
+                        </body>
+                        {{else}}
+                        <body class="box" style="background:#789"  id= "{{value['id']}}">
+                            <div class="feed" id="feed1">
+                                <div class="heart heartAnimation" id="like_{{value['id']}}" rel="unlike" style="" name = "{{value['id']}}"></div>
+                            </div>
+                        </body>
+                        {{/if}}
+                        <span class="dianzan_num" id="{{value['id']}}">{{value['fav_num']}}</span>
+                    </div>
+                    <div class="user_header">
+                      <img name="{{ value['user']['id']}}" onclick="open_this_user_center(this.name,this)" src="{{ value['user'][ 'header_url']}}">
+                    </div>
+
+                    {{if already2.indexOf(i)==-1}}
+                    <img class='add_friend_img' onclick="add_friend(this,this.name)" src="../image/add.png" name="{{value['user']['id']}}" id="friend_{{value['user']['id']}}">
+                    {{/if}}
+
+                </div>
+                <div class="box2">
+                    <span class="user_name">@{{ value['user']['nick_name']}}</span> {{if value['position']['lon']==-9}} {{else}}
+                    <span class="address" onclick="open_baidu_map(this.id)" id='{{value['position']['lon']}} {{value['position']['lat']}}'>
+                      {{value['position']['name']}}
+                    </span> {{/if}}
+                    <p class="describe">{{ value['desc']}}</p>
+                </div>
+            </div>
+            <video class="video_start" loop onclick="video_stop_fun(this)" src="{{ value['video_url']}}" poster="{{ value['image_url']}}">
+    </video>
+        </div>
+        {{/each}}
+    </script>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper" id="interpolation">
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:100px;i">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div type="" class="close" data-dismiss="modal" aria-hidden="true" style=""></div>
+                    <h4 class="modal-title note_title" id="myModalLabel">攻略</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="">&times;</button>
+                </div>
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2;"><img class="note_img_icon" src="../image/note/icon_meishi.png" alt=""> 美食:</div>
+                    <div style="width:75%;" id="food"></div>
+                </div>
+
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2;"><img class="note_img_icon" src="../image/note/icon_meishi.png" alt="">交通:</div>
+                    <div style="width:75%;" id="traffic"> </div>
+                </div>
+
+                <div class="modal-body note_body">
+                    <div style="color:#2530D2;"><img class="note_img_icon" src="../image/note/icon_meishi.png" alt=""> 住宿:</div>
+                    <div style="width:75%;" id="docm"> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/swaper/swiper.min.js"></script>
+<script src="../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../script/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="../script/open_loading.js"></script>
+<script type="text/javascript" src="../script/bootstrap/bootstrap.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="../script/jquery-1.11.0.min.js"><\/script>')
+</script>
+
+<script type="text/javascript">
+
+    $('body').on("click", '.heart', function() {
+        var video_id=$(this).attr("name");
+        if (zt == 1) {
+            var video_already = $api.getStorage('video_already');
+            var video_array = new Array();
+            if (video_already != undefined) {
+                video_array = video_already;
+            }
+            // var A = $(this).attr("id");
+            // var B = A.split("like");
+            // var messageID = B[1];
+            // var C = parseInt($("#likeCount" + messageID).html());
+            $(this).css("background-position", "")
+            var D = $(this).attr("rel");
+            if (D === 'like') {
+                $(this).addClass("heartAnimation").attr("rel", "unlike");
+                api.ajax({
+                    url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                    method: 'post',
+                    data: {
+                        values: {
+                            id: video_id,
+                            del_like: 1,
+                            user_id: user_id,
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret) {
+                        video_array.push(parseInt(video_id));
+                        $api.setStorage('video_already', video_array);
+                        document.getElementById(video_id).innerHTML++;
+                        api.sendEvent({
+                            name: 'add_like_num',
+                            extra: {
+                              video_id:video_id
+                            }
+                        });
+
+                    } else {
+                        alert("点赞失败");
+                    }
+                });
+            } else {
+                $(this).removeClass("heartAnimation").attr("rel", "like");
+                $(this).css("background-position", "left");
+                var video_already = $api.getStorage('video_already');
+                var video_array = new Array();
+                if (video_already != undefined) {
+                    video_array = video_already;
+                }
+
+                // if (video_already.indexOf(parseInt(video_id))!= - 1) {
+                //   video_already.splice(video_already.indexOf(parseInt(video_id)),1);
+                // }
+                // $api.setStorage("video_already",video_already);
+                // console.log(video_already);
+                api.ajax({
+                    url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                    method: 'post',
+                    data: {
+                        values: {
+                            id: video_id,
+                            del_like: 0,
+                            user_id: user_id,
+                        }
+                    }
+                }, function(ret, err) {
+                    if (ret) {
+                        document.getElementById(video_id).innerHTML--;
+                        video_array.splice(video_array.indexOf(parseInt(video_id)), 1);
+                        $api.setStorage('video_already', video_array);
+
+                        api.sendEvent({
+                            name: 'red_like_num',
+                            extra: {
+                              video_id:video_id
+                            }
+                        });
+
+                    } else {
+                        // api.alert({ msg: JSON.stringify(err) });
+                        console.log("nnn");
+                    }
+                });
+
+            }
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+    });
+    var zt = $api.getStorage('zt');
+    // 判断本地是否登录
+    function login_or_not() {
+        var zt = $api.getStorage('zt')
+        if (zt == 1) {
+            return true
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+    }
+
+
+    var user_id = ""
+    apiready = function() {
+      api.addEventListener({
+          name: 'add_like_num2'
+      }, function(ret, err) {
+          if ($('#like_'+ret['value']['video_id'])&&document.getElementById(ret['value']['video_id'])) {
+            $('#like_'+ret['value']['video_id']).css("background-position", "")
+            document.getElementById(ret['value']['video_id']).innerHTML++;
+            $('#like_'+ret['value']['video_id']).addClass("heartAnimation").attr("rel", "unlike");
+          }
+      });
+      api.addEventListener({
+          name: 'red_like_num2'
+      }, function(ret, err) {
+          if ($('#like_'+ret['value']['video_id'])&&document.getElementById(ret['value']['video_id'])) {
+            $('#like_'+ret['value']['video_id']).css("background-position", "left");
+            document.getElementById(ret['value']['video_id']).innerHTML--;
+            $('#like_'+ret['value']['video_id']).addClass("heartAnimation").attr("rel", "like");
+          }
+      });
+
+      api.addEventListener({
+          name: 'add_friend2'
+      }, function(ret, err) {
+          if ($('#friend_'+ret['value']['friend_id'])) {
+            console.log($('#friend_'+ret['value']['friend_id']).length);
+            $('#friend_'+ret['value']['friend_id']).css("visibility","hidden");
+          }
+      });
+      api.addEventListener({
+          name: 'red_friend2'
+      }, function(ret, err) {
+          if ($('#friend_'+ret['value']['friend_id']).length != 0) {
+            $('#friend_'+ret['value']['friend_id']).css("visibility","visible");
+          }else {
+            alert('123');
+            $('.user_header_'+ret['value']['friend_id']).append("<img class='add_friend_img' onclick='add_friend(this,this.name)' src='../image/add.png' name='"+ret['value']['friend_id']+"' id='friend_"+ret['value']['friend_id']+"'>");
+          }
+      });
+
+        //home_frame评论数+1
+        api.addEventListener({
+            name: 'add_comment_num'
+        }, function(ret, err) {
+            ele_id = 'comment_' + ret['value']['video_id']
+            if($("#"+ele_id).length > 0) {
+                document.getElementById(ele_id).innerHTML++;
+}
+        });
+
+
+        api.addEventListener({
+            name: 'refresh'
+        }, function(ret, err) {
+            window.location.href = window.location.href;
+        });
+        user_id = $api.getStorage('id');
+        var video_already = $api.getStorage('video_already');
+
+        // 第一次进入获取数据
+        get_home_free_data(1)
+
+        api.addEventListener({ //切换导航停止播放
+            name: 'stop_video_play'
+        }, function(ret, err) {
+            stop_all_video()
+        });
+        api.addEventListener({ //切换导航开始播放
+            name: 'start_video_play'
+        }, function(ret, err) {
+          $('.stop_img').fadeOut()
+            var video_start = $api.domAll('.video_start');
+            for (var i = 0; i < video_start.length; i++) {
+                video_start[now_play_video_index].play();
+            }
+        });
+        // 按下主键全部暂停
+        api.addEventListener({
+            name: 'keymenu'
+        }, function(ret, err) {
+            stop_all_video()
+        });
+        // 进入后台全部暂停
+        api.addEventListener({
+            name: 'pause'
+        }, function(ret, err) {
+            stop_all_video()
+        });
+
+
+    }
+
+
+    var stop_or_not = 1, //暂停开始判断
+        video_index = 0,
+        now_play_video_index = 0,
+        which_page_data = 2,
+        allow_user_touch_up = true;
+
+
+
+    function Obj(obj) {
+        this.num = obj,
+            this.getNumLater = function() {
+
+                setTimeout(function() {
+                        var video_start = $api.domAll('.video_start');
+                        console.log(this.num);
+                        video_start[this.num].play();
+                    }, 150) //箭头函数中的this总是指向外层调用者，也就是Obj
+            }
+    }
+    var swiper = new Swiper('.swiper-container', {
+        direction: 'vertical',
+
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true, //修改swiper的父元素时，自动初始化swiper
+        // speed: 800,
+        preventIntercationOnTransition: true,
+        on: {
+            slideChangeTransitionStart: function() {
+
+            },
+            touchStart: function(event) {
+                $('.address_logo_img').css("opacity", "1");
+            },
+            slideNextTransitionEnd: function() {
+                $('.address_logo_img').css("opacity", "1");
+                address_logo_set_opacity();
+                $('.stop_img').fadeOut()
+                stop_or_not = 1; //滑动恢复暂停判断数
+                video_index++;
+                var video_start = $api.domAll('.video_start');
+                for (var i = 0; i < video_start.length; i++) {
+                    now_play_video_index = this.activeIndex //设置当前播放的位置
+                    if (i!=this.activeIndex) {
+                            video_start[i].pause();
+                    }
+                        // console.log('还没彻底执行完');
+                }
+
+                // console.log('当前的swiper数量是：' + video_start.length)
+                video_start[this.activeIndex].play();
+                var up_or_down = this.activeIndex - this.previousIndex;
+                if (up_or_down == 1) {
+                    // 监听下滑到底部
+                    isend = funisEnd()
+                    if (allow_user_touch_up == true) {
+                        if (isend == true) {
+                            allow_user_touch_up = false //改为false不允许用户再次加载
+                            get_home_free_data(which_page_data)
+                            which_page_data++; //第几页的数据
+                        }
+                    } else {
+                        console.log('上次的数据还没加载完，还不能上拉加载');
+                    }
+                } else {
+                    // 上划了
+                }
+            },
+        }
+    });
+
+
+
+
+    // 获取首页数据
+    function get_home_free_data(i) {
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/api/index/?page=' + i + '&id=1&size=6',
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                body: {
+                    name: 'haha'
+                }
+            }
+        }, function(ret, err) {
+            if (ret) {
+              // console.log(JSON.stringify(ret));
+                var video_already = $api.getStorage('video_already');
+                var friends = $api.getStorage('friends');
+                var already_array = new Array();
+                var friends_array = new Array();
+                if (video_already != undefined) {
+                    for (var a = 0; a < 6; a++) {
+                        for (var b = 0; b < video_already.length; b++) {
+                            if (ret[a].id == video_already[b]) {
+                                already_array.push(a);
+                            }
+                        }
+                    }
+                }
+                if (friends != undefined) {
+                    for (var a = 0; a < 6; a++) {
+                        for (var b = 0; b < friends.length; b++) {
+                            if (ret[a].user.id == friends[b]) {
+                                friends_array.push(a);
+                            }
+                        }
+                    }
+                }
+
+
+
+
+                vodeo_atten_data = ret;
+                var data = {
+                    list: vodeo_atten_data,
+                    already: already_array,
+                    already2: friends_array
+                };
+                var html = template('interpolationtmpl', data);
+                if (i == 1) {
+                    document.getElementById('interpolation').innerHTML = html;
+                    $api.dom('.video_start').play()
+                    var video_start = $api.domAll('.video_start');
+                    video_start[1].play()
+                    video_start[0].play()
+                        //第一个视频开始播放
+                } else {
+                    allow_user_touch_up = true //改为true允许用户再次加载
+                    $("#interpolation").append(html)
+                    var video_startss = document.getElementsByClassName('video_start')[0]
+                    video_startss.play()
+                    var video_start = $api.domAll('.video_start'); //让swiper永远不超过
+                    if (video_start.length > 12) {
+                        for (var i = 0; i < 6; i++) {
+                            swiper.removeSlide(i);
+                        }
+                    }
+                }
+            } else {
+                alert("首页数据请求失败！");
+            }
+        });
+    }
+
+    // 判断是否到底了
+    function funisEnd() {
+        return swiper.isEnd
+    }
+    // 暂停开始
+    function video_stop_fun(e) {
+        if (stop_or_not == 1) {
+            e.pause();
+            stop_or_not = 2;
+            $('.stop_img').fadeIn()
+        } else {
+          $('.stop_img').fadeOut()
+            e.play();
+            stop_or_not = 1;
+            // console.log('start');
+
+        }
+    }
+
+
+    //打开评论
+    function comment(i, obj) {
+        if (zt == 1) {
+            api.openFrame({
+                name: 'comment',
+                animation: {
+                    type: "movein", //动画类型（详见动画类型常量）
+                    subType: "from_bottom", //动画子类型（详见动画子类型常量）
+                    duration: 300 //动画过渡时间，默认300毫秒
+                },
+                url: 'comment.html',
+                rect: {
+                    x: 0,
+                    y: 0,
+                    w: 'auto',
+                    h: 'auto'
+                },
+                pageParam: {
+                    id: i,
+                    comment_total: $(obj).children('span').text()
+                },
+                bgColor: 'rgba(0,0,0,0)'
+            });
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+
+    }
+    //进入地图分类页面
+    function open_baidu_map(e) {
+
+        if (zt == 1) {
+            api.openFrame({
+                name: 'address',
+                url: 'baiduMap/address.html',
+                rect: {
+                    x: 0,
+                    y: 0,
+                    w: 'auto',
+                    h: 'auto'
+                },
+                pageParam: {
+                    e: e.split(" ")[0],
+                    n: e.split(" ")[1]
+                },
+                bgColor: 'rgba(0,0,0,0)'
+            });
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+
+
+    }
+    //点赞控制部分
+
+
+
+
+
+    var friends = $api.getStorage('friends');
+    console.log(friends);
+    //添加好友部分
+    function add_friend(obj, friend_id) {
+        if (zt == 1) {
+            var friends = $api.getStorage('friends');
+            var friends_array = new Array();
+            if (friends != undefined) {
+                friends_array = friends;
+            }
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/add_friend/',
+                method: 'post',
+                data: {
+                    values: {
+                        user_id:$api.getStorage('id'),
+                        friend_id: friend_id,
+                        delete_or_add: 1
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.sendEvent({
+                        name: 'add_friend',
+                        extra: {
+                          friend_id:friend_id
+                        }
+                    });
+                    api.toast({
+                      msg: '添加成功',
+                      duration: 3000,
+                      location: 'bottom'
+                    });
+                    obj.style.visibility = "hidden";
+                    friends_array.push(parseInt(friend_id));
+                    $api.setStorage('friends', friends_array);
+                } else {
+                    console.log('失败');
+                }
+            });
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+
+            });
+        }
+
+    }
+
+
+
+
+
+
+    function share(video_id_name) {
+        if (zt == 1) {
+            var sharedModule = api.require('shareAction');
+            sharedModule.share({
+                text: '纯文本信息',
+                type: 'text'
+            });
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/share_num/',
+                method: 'post',
+                data: {
+                    values: {
+                        id: $(video_id_name).attr("name"),
+                        user_id: $api.getStorage('id'),
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                  // 添加分享数
+                    share_num =   $('.fenxiang_num_'+$(video_id_name).attr("name")).text()
+                    $('.fenxiang_num_'+$(video_id_name).attr("name")).text(parseInt(share_num)+1)
+                } else {
+                    alert("点赞失败");
+                }
+            });
+
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+    }
+
+
+
+
+    function open_this_user_center(i,obj) {
+        var friend_arr = $api.getStorage('friends'),
+            is_friend = 0
+        if (friend_arr.includes(parseInt(i))==true) {
+            console.log('是好友 0 不是  1是好友');
+            is_friend =1
+        }
+          stop_all_video()
+          open_loading(2)
+          api.openFrame({
+              name: 'other_header',
+              url: 'other/user_header.html',
+              rect: {
+                  x: 0,
+                  y: 0,
+                  w: 'auto',
+                  h: 270
+              },
+              pageParam: {
+                  user_id: i,
+                  is_friend : is_friend
+              },
+              bgColor: 'rgba(0,0,0,0)'
+          });
+        bring_load_to_index()  //带loading回最前面
+
+    }
+
+    function address_logo_set_opacity() {
+        // clearInterval(address_logo)
+        var logo_address_setTimeout = setTimeout(function() {
+            var opa = 0.9
+            var address_logo = setInterval(function() {
+                if (opa <= 0.3) {
+                    clearInterval(address_logo)
+                }
+                // console.log($('.address_logo_img').css("opacity"));
+                $('.address_logo_img').css("opacity", opa)
+                opa = opa - 0.05
+            }, 60);
+        }, 10)
+    }
+
+    function open_note(f,t,d) {
+        $('#food').text(f)
+        $('#traffic').text(t)
+        $('#docm').text(d)
+        $('#myModal').modal('show')
+    }
+
+    function stop_all_video() {
+        var video_start = $api.domAll('.video_start');
+        for (var i = 0; i < video_start.length; i++) {
+            video_start[i].pause()
+        }
+        $('.stop_img').fadeIn()
+    }
+</script>
+
+
+
+</html>

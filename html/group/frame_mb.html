@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/group/sider.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+		<style type="text/css">
+			.labs {
+				background: #FFFFFF;
+				position: relative;
+				top: 0.5rem;
+				width: 96%;
+				margin-left: auto;
+				margin-right: auto;
+				border: 1px solid #F6F6F6;
+				border-radius: 4px;
+			}
+			.bt {
+				background: #FFFFFF;
+				height: 3.5rem;
+				border-bottom: 1px solid #F6F6F6;
+				margin-left: 1rem;
+				margin-right: 1rem;
+			}
+			.x {
+				background: #959595;
+				height: 1px;
+				overflow: hidden;
+				width: 78%;
+				margin-left: auto;
+				margin-right: auto;
+				position: relative;
+				top: 30px;
+				z-index: 1
+			}
+			.bt1 {
+				background: #FFFFFF;
+				height: 2.3rem;
+				width: 40%;
+				margin-right: auto;
+				margin-left: auto;
+				text-align: center;
+				font-size: 0.84rem;
+				z-index: 21;
+				position: relative;
+				top: 0px;
+				line-height: 2.3rem;
+				color: #00AC74;
+				font-weight: bold;
+			}
+			.bt2 {
+				background: #FFFFFF;
+				width: 70%;
+				margin-right: auto;
+				margin-left: auto;
+				text-align: center;
+				font-size: 0.64rem;
+				z-index: 22;
+				position: relative;
+				top: -8px;
+				color: #5D5D5D;
+			}
+			.room {
+				width: 100%;
+				background: #FFFFFF;
+				height: 100%;
+				padding-bottom: 1rem;
+			}
+			.room ul {
+				background: #FFFFFF;
+				height: 100%;
+				min-height: 9rem;
+				padding: 1rem 0.5rem 1rem 0.5rem;
+
+			}
+			.room ul li {
+				width: 25%;
+				text-align: center;
+				font-size: 0.6rem;
+				float: left;
+			}
+			.room ul li:active {
+				background: #F6F6F6
+			}
+			.box {
+				width: 100%;
+				height: 4.2rem;
+			}
+			.box p img {
+				width: 2.4rem;
+				display: inline;
+				height: 2.4rem;
+			}
+			.box a {
+				color: #5A5A5A;
+			}
+			.aui-list .aui-list-item-title {
+				font-size: 0.7rem;
+				color: #666666
+			}
+			.p-b {
+				padding-bottom: 0.6rem;
+			}
+			.kong {
+				height: 7rem;
+				background-image: url(../res/e.png);
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-size: 6rem;
+				position: relative;
+				display: none;
+				top: -9.2rem;
+			}
+			.kong_wz {
+				position: relative;
+				top: 6rem;
+				text-align: center;
+				font-size: 0.85rem;
+				color: #A1A1A1
+			}
+			.mask {
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, .5);
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 999;
+				display: none;
+			}
+
+			.f1 {
+				font-size: 0.9rem;
+				color: #777777
+			}
+			.aui-list .aui-list-item-label-icon {
+				width: auto;
+				padding-right: 0.4rem;
+			}
+
+			.aui-tab-item {
+				color: #6B6B6B;
+			}
+			.aui-list .aui-list-item-text {
+				font-size: 0.6rem;
+			}
+
+			.aui-list .aui-list-item-media {
+				width: 4.5rem;
+				height: 3.3rem;
+				overflow: hidden;
+				padding: 0.5rem 0;
+				padding-right: 0.5rem;
+			}
+			.aui-list .aui-list-item-media span{
+				position: absolute;
+				left:0;
+				font-size: 0.5rem;
+				color: #FFFFFF;
+				bottom:0;
+				background:rgba(0,0,0,0.5);
+				height: 0.7rem;
+				width: 4rem;
+				line-height: 0.76rem;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div class="labs">
+			<div class="bt">
+				<div class="x"></div>
+				<div class="bt1">
+					群组成员列表
+				</div>
+				<div class="bt2" id="sj">
+					目前已有20位成员
+				</div>
+			</div>
+			<div class="room" >
+				<ul id="mb"></ul>
+			</div>
+			<div style="clear: both"></div>
+		</div>
+		<div class="mask">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+		</div>
+	</body>
+	<script src="../../script/group/api.js" ></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.parseTapmode();
+			var aa = $api.dom('.zh_list');
+			$api.css($api.dom('.spinner'), 'display: block');
+			$api.css($api.dom(".mask"), 'display:block');
+			var html = '';
+			var query = api.require("query");
+			query.createQuery(function(ret, err) {
+				if (ret && ret.qid) {
+					var queryId = ret.qid;
+					query.desc({
+						qid : queryId,
+						column : 'createdAt'
+					});
+					var model = api.require("model");
+					model.findAll({
+						class : "mb",
+						qid : queryId
+					}, function(ret, err) {
+						if (ret) {
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.css($api.dom(".mask"), 'display:none');
+							for (var i = 0; i < ret.length; i++) {
+								html += '<li onclick="lt(' + ret[i].idd + ',' + "'" + ret[i].xm + "'" + ',' + "'" + ret[i].tx + "'" + ')">';
+								html += '<div class="box">';
+								if (ret[i].tx == null) {
+									tx = "../res/tx.jpg";
+								} else {
+									tx = ret[i].tx;
+								}
+								if (ret[i].xm == null) {
+									xm = "张三";
+								} else {
+									xm = ret[i].xm;
+								}
+								html += '<p><img src="' + tx + '" class="aui-img-round"/></p><a>' + xm + '</a>';
+								html += '</div>';
+								html += '</li>';
+							}
+							$api.html($api.dom('#mb'), html);
+							$api.html($api.dom('#sj'), '目前已有' + ret.length + '位成员');
+						}
+					});
+				}
+			});
+		}
+		function lt(id, zh, tx) {
+			if ($api.getStorage('id') == id) {
+			} else {
+				api.openWin({
+					reload : true,
+					name : 'win_chat',
+					url : 'win_chat.html',
+					vScrollBarEnabled : false,
+					pageParam : {
+						id : id,
+						zh : zh,
+						tx : tx
+					}
+				});
+			}
+		}
+	</script>
+</html>

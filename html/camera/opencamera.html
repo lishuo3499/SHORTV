@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>云API</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+
+
+    </script>
+
+</head>
+<body>
+  123123
+<script type="text/javascript">
+apiready=function () {
+var demo = api.require('quPaiModule');
+demo.permissionCheck(
+function(ret){
+  var param = {
+    resolutionMode : 4,
+    ratioMode : 3,
+    recordMode : 3,
+    beautyStatus : true,
+    beautyLevel : 0,
+    isCameraBack : false,
+    isNeedClip : true,
+    minDuration : 2,
+    maxDuration : 30,
+    videoQuality : 4,
+    gop : 1,
+    frameRate : 100
+};
+var demo = api.require('quPaiModule');
+demo.record(param,
+function(ret) {
+  alert(JSON.stringify(ret));
+  var data = JSON.stringify(ret)
+  api.ajax({
+      url: 'http://118.24.53.130:8000/uploadfile/',
+      method: 'post',
+      data: {
+          values: {
+            //  ajax_valite_num: valite_num
+          },
+          files: {
+              file:[ret['thumbnailPath'],ret['videoPath']]
+          }
+      }
+
+  }, function(ret, err) {
+    //  if (ret) {  api.alert({ msg: JSON.stringify(ret) });  } else {api.alert({ msg: JSON.stringify(err) });}
+  });
+});
+});
+
+// api.addEventListener({
+//     name: 'keyback'
+// }, function(ret, err) {
+//   api.closeWin({
+//   name: 'camera'
+// });
+// });
+
+}
+</script>
+
+
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+
+</html>

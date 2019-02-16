@@ -1,0 +1,412 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/group/qun.css" >
+		<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+		<style>
+			#toux {
+				width: 5.3rem;
+				height: 5.3rem;
+				margin-right: auto;
+				margin-left: auto;
+			}
+			.bk {
+				height: 9rem;
+				background: #FFF;
+				border-bottom: 1px solid #EBEBEB;
+			}
+			#toux img {
+				width: 5.3rem;
+				height: 5.3rem;
+			}
+			.aui-list {
+				border-top: none;
+			}
+			@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+				.aui-list {
+					border: none;
+					background-size: 100% 0px;
+				}
+			}
+			.fl {
+				font-size: 0.9rem;
+				color: #646464
+			}
+			.aa {
+				color: #646464;
+				height: 8rem;
+			}
+			.upimg {
+				position: relative;
+				top: 3.4rem;
+				left: 40%;
+				font-size: 1.4rem;
+				color: #FFFFFF;
+				z-index: 88888;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav" id="head">
+			<a class="aui-pull-left aui-btn" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+			<div class="aui-title" style="font-size:0.9rem;font-weight: none;">
+				群组信息
+			</div>
+			<a class="aui-pull-right upp" tapmode onclick="up()">创 建</a>
+		</header>
+		<div class="bk" tapmode onclick="upimg()">
+			<div id="toux" style="">
+	<i class="aui-iconfont aui-icon-camera upimg" style="position:relative; top:00px;left:80px; color:#fff;"></i>
+				<img src="../../image/group/group_header.png" id="qun_tx">
+				 <span style="width:1200px; color:#6C6C6C;">点击添加头像</span>
+			</div>
+
+			<div id="tx" style="display: none">
+				http://a11827977e9deabc63d5.test.upcdn.net/apicloud/b8348ea89e85636bc8784133234ded69.jpg
+			</div>
+		</div>
+		<div class="aui-card-list">
+			<div class="aui-content aui-margin-15">
+				<ul class="aui-list aui-form-list">
+					<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+							<div class="aui-list-item-label-icon">
+								<i class="aui-iconfont aui-icon-star aui-text-success"></i>
+							</div>
+							<div class="aui-list-item-input">
+								<input type="text" maxlength="10" placeholder="群名称" id="qun_zh" class="aa">
+							</div>
+						</div>
+					</li>
+					<!-- <li class="aui-list-item">
+						<div class="aui-list-item-inner">
+							<div class="aui-list-item-label-icon">
+								<i class="aui-iconfont aui-icon-cert aui-text-danger"></i>
+							</div>
+							<div class="aui-list-item-input">
+								<input type="number" id="qun_id" placeholder="群id信息" class="aa">
+							</div>
+						</div>
+					</li> -->
+					<li class="aui-list-item">
+						<div class="aui-list-item-inner">
+							<div class="aui-list-item-input aa" >
+								<textarea maxlength="100" id="qun_sm" placeholder="群组基本信息" class="aa"></textarea>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="spinner">
+			<div class="bounce1"></div>
+			<div class="bounce2"></div>
+			<div class="bounce3"></div>
+		</div>
+		<div class="canvas">
+			<div id="clipArea"></div>
+			<div id="view"></div>
+		</div>
+		<div id="anniu">
+			<a  style="color:#069">选择操作</a>
+			<div class="btn-2" tapmode onclick="save()">
+				<button>
+					截取头像
+				</button>
+			</div>
+			<div class="btn-3" tapmode onclick="quxiao()">
+				<button>
+					取 消
+				</button>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js" ></script>
+	<script type="text/javascript" src="../../script/group/jquery.js" ></script>
+	<script type="text/javascript" src="../../script/group/sha1.min.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			$api.fixStatusBar($api.byId('head'));
+		}
+		function upimg() {
+			api.actionSheet({
+				title : '上传群头像',
+				cancelTitle : '取消',
+				buttons : ['手机拍照', '手机相册']
+			}, function(ret, err) {
+				if (ret) {
+					getPicture(ret.buttonIndex);
+				}
+			});
+		}
+
+		function getPicture(sourceType) {
+			//相机拍照
+			if (sourceType == 1) {
+				api.getPicture({
+					sourceType : 'camera',
+					encodingType : 'jpg',
+					mediaValue : 'pic',
+					destinationType : 'url'
+				}, function(ret, err) {
+					// 获取拍照图像并剪辑
+					if (ret) {
+						$(".canvas").fadeIn(300);
+						$("#anniu").addClass("show");
+						var FNImageClip = api.require('FNImageClip');
+						FNImageClip.open({
+							rect : {
+								x : 0,
+								y : 0,
+								w : api.winWidth,
+								h : api.winHeight - document.querySelector('#anniu').offsetHeight
+							},
+							srcPath : ret.data,
+							mode : 'image',
+							style : {
+								mask : 'rgba(0,0,0,0.75)',
+								clip : {
+									w : 250,
+									h : 250,
+									x : (api.frameWidth - 250) / 2,
+									y : (api.frameHeight - 250) / 2.6,
+									borderColor : '#0f0',
+									borderWidth : 1,
+									appearance : 'rectangle'
+								}
+							},
+						}, function(ret, err) {
+						});
+					}
+				});
+			} else if (sourceType == 2) {
+				//手机相册选图片
+				api.getPicture({
+					sourceType : 'album',
+					encodingType : 'jpg',
+					mediaValue : 'pic',
+					destinationType : 'url'
+				}, function(ret, err) {
+					if (ret.data.length > 0) {
+						$(".canvas").fadeIn(300);
+						$("#anniu").addClass("show");
+						var FNImageClip = api.require('FNImageClip');
+						FNImageClip.open({
+							rect : {
+								x : 0,
+								y : 0,
+								w : api.winWidth,
+								h : api.winHeight - document.querySelector('#anniu').offsetHeight
+							},
+							srcPath : ret.data,
+							mode : 'image',
+							style : {
+								mask : 'rgba(0,0,0,0.75)',
+								clip : {
+									w : 250,
+									h : 250,
+									x : (api.frameWidth - 250) / 2,
+									y : (api.frameHeight - 250) / 2.6,
+									borderColor : '#0f0',
+									borderWidth : 0,
+									appearance : 'rectangle'
+								}
+							},
+						}, function(ret, err) {
+						});
+					}
+				});
+			}
+		}
+
+		//保存剪辑图像
+		function save() {
+			var nubs = nub(1000, 3000);
+			$api.css($api.dom('.spinner'), 'display: block');
+			var FNImageClip = api.require('FNImageClip');
+			var model = api.require('model');
+			FNImageClip.save({
+				destPath : 'fs://tx_' + nubs + '.jpg',
+				copyToAlbum : false,
+				quality : 0.6
+			}, function(ret, err) {
+				var qun_tx = ret.destPath;
+				FNImageClip.close();
+				model.uploadFile({
+					report : false,
+					data : {
+						file : {
+							url : qun_tx
+						}
+					}
+				}, function(ret, err) {
+					// alert(JSON.stringify(ret))
+					if (ret) {
+						$api.css($api.dom('.spinner'), 'display: none');
+						$api.byId('qun_tx').src = ret.url;
+						$api.text($api.byId('tx'), ret.url);
+						api.toast({
+							msg : '头像上传成功',
+							duration : 3000,
+							location : 'bottom'
+						});
+					} else {
+						api.toast({
+							msg : '头像上传失败',
+							duration : 3000,
+							location : 'bottom'
+						});
+					}
+				});
+				$(".canvas").hide();
+				$("#anniu").removeClass("show");
+				FNImageClip.close();
+			});
+		}
+
+		function nub(minNum, maxNum) {
+			switch(arguments.length) {
+				case 1:
+					return parseInt(Math.random() * minNum + 1);
+					break;
+				case 2:
+					return parseInt(Math.random() * (maxNum - minNum + 1) + minNum);
+					break;
+				default:
+					return 0;
+					break;
+			}
+		}
+
+		function up() {
+
+			var zh = $api.val($api.byId('qun_zh'));
+
+			var query = api.require("query"),
+					qun_name = ''
+			query.createQuery(function(ret, err) {
+							if (ret && ret.qid) {
+									var queryId = ret.qid;
+									query.whereEqual({
+											qid: queryId,
+											column: 'qun_zh',
+											value: zh
+									});
+									var model = api.require("model");
+									model.findAll({
+											class: "qun",
+											qid: queryId
+									}, function(ret, err) {
+										// alert(JSON.stringify(ret))
+										qun_name = ret
+
+										var model = api.require('model');
+													var sm = $api.val($api.byId('qun_sm'));
+													if (zh.length < 2 || zh.length > 20) {
+														api.toast({
+															msg : '群名称长度为2-10个字符',
+															duration : 3000,
+															location : 'bottom'
+														});
+													}else if (sm.length < 4 || sm.length > 40) {
+														api.toast({
+															msg : '群简介长度应为4-100个字符',
+															duration : 3000,
+															location : 'bottom'
+														});
+													}else if (qun_name.length>0) {
+														api.toast({
+															msg : '群名称已存在',
+															duration : 3000,
+															location : 'bottom'
+														});
+													}	else {
+														var qun_data =Date.parse( new Date())/1000,
+															  qun_random = Math.ceil(Math.random()*100),
+														    qun_id_random = '8'+qun_data.toString().slice(3,10)+qun_random.toString()
+														$api.css($api.dom('.spinner'), 'display: block');
+														var model = api.require('model');
+														console.log($api.text($api.byId('tx')))
+														model.insert({
+															class : 'qun',
+															value : {
+																qun_zh : $api.val($api.byId('qun_zh')),
+																qun_id : qun_id_random,
+																qun_tx : $api.text($api.byId('tx')),
+																qun_sm : $api.val($api.byId('qun_sm')),
+																glid : $api.getStorage("id")
+															}
+														}, function(ret, err) {
+															$api.css($api.dom('.spinner'), 'display: none');
+															if (ret) {
+																create_qun($api.getStorage("id"),qun_id_random, zh);
+																//创建群
+																// api.toast({
+																// 	msg : '群组创建成功',
+																// 	duration : 3000,
+																// 	location : 'bottom'
+																// });
+															} else {
+																api.toast({
+																	msg : '群组创建失败',
+																	duration : 3000,
+																	location : 'bottom'
+																});
+															}
+														});
+													}
+									})
+								}
+									})
+
+
+		}
+
+		function create_qun(user_id, qun_id, qun_zh) {
+			var appKey = "e5t4ouvpe670a";
+			var appSecret = "CtuQTLNeFbg";
+			var nonce = Math.floor(Math.random() * 1000000);
+			var timestamp = Date.now();
+			var signature = sha1("" + appSecret + nonce + timestamp);
+			api.ajax({
+				url : "http://api.cn.ronghub.com/group/create.json",
+				method : "post",
+				headers : {
+					"RC-App-Key" : appKey,
+					"RC-Nonce" : "" + nonce,
+					"RC-Timestamp" : "" + timestamp,
+					"RC-Signature" : "" + signature,
+					"Content-Type" : "application/x-www-form-urlencoded"
+				},
+				data : {
+					values : {
+						userId : user_id, //要加入群的用户 Id。（必传）
+						groupId : qun_id, //创建群组 Id。（必传）
+						groupName : qun_zh,//群组 Id 对应的名称。（必传）
+					}
+				}
+			}, function(ret, err) {
+				if (ret.code == 200) {
+					api.toast({
+						msg : '群组创建成功',
+					});
+					api.sendEvent({
+						name : 'ok'
+					});
+					setTimeout(function () {
+						api.closeWin({
+						});
+					},2000)
+				}
+			});
+		}
+		function back() {
+			api.closeWin({
+			});
+		}
+	</script>
+</html>

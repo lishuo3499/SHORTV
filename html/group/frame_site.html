@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<style type="text/css">
+			.user-info {
+				background-color: #ffffff;
+				padding: 0.75rem 0;
+			}
+			img.avatar {
+				display: block;
+				margin: 0 auto;
+				width: 20%;
+			}
+			.aui-list .aui-list-header {
+				background-color: #ffffff;
+				line-height: 1.2rem;
+			}
+			.text-white {
+				color: #ffffff !important;
+			}
+			.tuichu {
+				font-size: 0.8rem;
+				color: #424242;
+				text-align: center;
+				margin-top: 0.5rem;
+				background-color: #FFF;
+				height: 2.4rem;
+				line-height: 2.4rem;
+				border-top: 1px solid #EEEEEE;
+				border-bottom: 1px solid #EEEEEE;
+			}
+			.aui-list {
+				border-top: none;
+			}
+			@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+				.aui-list {
+					border: none;
+					background-size: 100% 0px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<section class="aui-content user-info aui-text-center aui-margin-b-15">
+			<img src="../res/tx.jpg" class="avatar aui-img-round" id="tx">
+			<h2 class="aui-margin-t-15" id="zh">川哥哥</h2>
+			<div class="aui-row aui-margin-t-15">
+				<div class="aui-col-xs-6 aui-text-right aui-border-r aui-padded-r-10">
+					<div class="aui-label aui-label-info">
+						LV 6
+					</div>
+				</div>
+				<div class="aui-col-xs-6 aui-text-left aui-padded-l-10">
+					学分:100
+				</div>
+			</div>
+		</section>
+		<section class="aui-content">
+			<ul class="aui-list aui-list-in">
+				<li class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-wechat aui-text-info"></i>
+					</div>
+					<div class="aui-list-item-inner aui-list-item-arrow" onclick="qun()">
+						<div class="aui-list-item-title">
+							群组管理
+						</div>
+					</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-image aui-text-purple"></i>
+					</div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">
+							我的相册
+						</div>
+					</div>
+				</li>
+				<li class="aui-list-item" onclick="jj()">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-share aui-text-danger"></i>
+					</div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">
+							我的分享
+						</div>
+					</div>
+				</li>
+				<li class="aui-list-item" onclick="qk()">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-trash aui-text-success"></i>
+					</div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">
+							清空会话
+						</div>
+					</div>
+				</li>
+				<li class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-gear aui-text-warning"></i>
+					</div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">
+							系统设置
+						</div>
+					</div>
+				</li>
+			</ul>
+		</section>
+		<div class="tuichu" onclick="tuichu()">
+			退出登录
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js" ></script>
+	<script type="text/javascript" src="../../script/group/aui-dialog.js" ></script>
+	<script type="text/javascript" src="../../script/group/sha1.min.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			$api.byId('zh').innerHTML = $api.getStorage('zh');
+			$api.byId('tx').src = $api.getStorage('tx');
+		}
+		function qk() {
+			var rong = api.require('rongCloud2');
+			rong.clearConversations({
+				conversationTypes : ['PRIVATE', 'GROUP']
+			}, function(ret, err) {
+				if (ret.status == 'success') {
+					api.toast({
+						msg : '成功清除',
+						duration : 3000,
+						location : 'bottom'
+					});
+					api.sendEvent({
+						name : 'qk'
+					});
+				}
+			})
+		}
+
+		function qun() {
+			api.openWin({
+				bounces : false,
+				name : 'win_qun_gl',
+				url : 'win_qun_gl.html',
+				vScrollBarEnabled : false
+			});
+		}
+
+		function tuichu() {
+			$api.clearStorage();
+			api.toast({
+				msg : '成功退出',
+				duration : 3000,
+				location : 'bottom'
+			});
+			api.openWin({
+				bounces : false,
+				name : 'login',
+				url : 'win_login.html',
+				vScrollBarEnabled : false,
+				hScrollBarEnabled : false
+			});
+		}
+
+		function jj() {
+
+			var appKey = "e5t4ouvpe670a";
+			var appSecret = "CtuQTLNeFbg";
+			var nonce = Math.floor(Math.random() * 1000000);
+			var timestamp = Date.now();
+			var signature = sha1("" + appSecret + nonce + timestamp);
+			api.ajax({
+				url : "http://api.cn.ronghub.com/group/join.json",
+				method : "post",
+				headers : {
+					"RC-App-Key" : appKey,
+					"RC-Nonce" : "" + nonce,
+					"RC-Timestamp" : "" + timestamp,
+					"RC-Signature" : "" + signature,
+					"Content-Type" : "application/x-www-form-urlencoded"
+				},
+				data : {
+					values : {
+						userId : 1934401&3487976&40536531,
+						groupId : 2010,
+						groupName : 'apiclud学习交流'
+					}
+				}
+			}, function(ret, err) {
+				if (ret.code == 200) {
+					api.toast({
+						msg : '成功',
+					});
+				}
+			});
+
+
+
+
+
+		}
+	</script>
+</html>

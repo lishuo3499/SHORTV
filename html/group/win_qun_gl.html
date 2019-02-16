@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<style type="text/css">
+			#tx {
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				display: inline;
+				position: absolute;
+				top: 7px;
+				left: 3px;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav" id="head">
+			<a class="aui-btn aui-pull-left" tapmode onclick="closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title">
+				群组列表
+			</div>
+			<a class="aui-pull-right aui-btn" tapmode onclick="qun_add()"> <span class="aui-iconfont aui-icon-plus"></span> </a>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.parseTapmode();
+			$api.fixStatusBar($api.byId('head'));
+			var head_h = $api.offset($api.byId('head')).h;
+			api.openFrame({
+				name : 'frame_qun_gl',
+				url : 'frame_qun_gl.html',
+				bgColor : 'f5f5f5',
+				rect : {
+					x : 0,
+					y : head_h,
+					w : 'auto',
+					h : api.winHeight - head_h
+				},
+				hScrollBarEnabled : false,
+				vScrollBarEnabled : false
+			});
+		};
+		function closeWin() {
+			api.closeWin({
+			});
+		}
+		
+		function qun_add() {
+			api.openWin({
+				bounces : false,
+				name : 'win_qun_add',
+				url : 'win_qun_add.html',
+				vScrollBarEnabled : false
+			});
+		}
+	</script>
+</html>

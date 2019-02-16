@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冰狗</title>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+
+    <script src="../../script/api.js"></script>
+
+</head>
+
+<body bgcolor="#ebebeb">
+
+<script type="text/javascript">
+
+
+  apiready=function () {
+    var pageParam = api.pageParam;
+
+
+    api.openFrame({
+        name: 'videomodel',
+        url: 'videomodel.html',
+        rect: {
+            x: 0,
+            y:0,
+            w: 'auto',
+            h:  'auto'
+        },
+        pageParam: {
+            data_open: pageParam.data
+        }
+    });
+  }
+
+</script>
+
+
+
+
+</body>

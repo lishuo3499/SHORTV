@@ -1,0 +1,695 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>APICloud App</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" href="../css/swiper.min.css">
+      <link rel="stylesheet" href="../css/mui/mui.min.css">
+    <style>
+    header{
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 20px;
+      background: #fff;
+    }
+    .null{
+      height: 20px;
+      border-bottom: 4px solid #999;
+    }
+    .content_box{
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0 15px 0;
+      width: 100%;
+      border-bottom: 1px solid #EFEFF1;
+      background: #fff;
+    }
+    .box_head{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px 0 15px;
+    }
+    .user_head{
+      margin-right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #333;
+      overflow: hidden;
+    }
+    .middle{
+      flex-grow: 1;
+      width: auto;
+      font-size: 14px;
+    }
+    .middle span{
+      font-size: 14px;
+    }
+    .attention{
+      border-radius: 5px;
+      width: 48px;
+      height: 24px;
+      background: rgb(0, 122, 255);
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+      line-height: 24px;
+    }
+    .box_video{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0 15px 0;
+      height: 60vw;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+    video{
+      margin: 0 auto;
+      height: 100%;
+    }
+    .box_body{
+      padding: 0 15px 0 15px;
+    }
+    .dec_head{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .address{
+      font-size: 13px;
+      color: #000;
+    }
+    .time{
+      font-size: 10px;
+      color: rgb(152, 153, 153);
+    }
+    .describe{
+      padding: 10px 0 15px 0;
+      border-bottom: 1px dashed #f5f5f5;
+      font-size: 13px;
+      line-height: 20px;
+      color: rgb(101, 97, 97);
+
+    }
+      .describe p {
+          overflow: hidden;
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:2;
+        text-overflow: ellipsis;
+      }
+    .box_footer{
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding: 0 15px 0 15px;
+    }
+    .footer_left{
+      display: flex;
+      flex-direction: row;
+    }
+    .footer_left img{
+      width: 16px;
+    }
+    .footer_left span{
+      margin-left: 10px;
+      margin-right: 24px;
+      font-size: 10px;
+      color: rgb(152, 153, 153);
+    }
+    .footer_right{
+      width: 20px;
+      height: 5px;
+      background: #897;
+    }
+    .footer_left div{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .user_head img{
+      width: 100%;
+    }
+    /*#template_box{
+      height: auto;
+      overflow: auto;
+    }*/
+    body,html{
+      height: 100%;
+    }
+    </style>
+</head>
+
+<body>
+    <script id="template_moudle" type="text/html">
+        {{each list value i}}
+            <div class="content_box">
+              <div class="box_head">
+                <div class="user_head"><img onclick="others()" src="{{ value['user'][ 'header_url']}}"></div>
+                <div class="middle"><span>{{ value['user']['nick_name']}}</span></div>
+                {{if already2.indexOf(value.user.id) == -1}}
+                  <div class="attention" onclick="add_friend(this)" name="{{value['user']['id']}}" id="friend_{{value['user']['id']}}">关注</div>
+                {{else}}
+                  <div class="attention" onclick="red_friend(this)" name="{{value['user']['id']}}" id="friend_{{value['user']['id']}}">已关注</div>
+                {{/if}}
+              </div>
+              <div class="box_video">
+                <video class="video_start" loop onclick="video_stop_fun(this)" src='{{value['video_url']}}'  poster="{{ value['image_url']}}"></video>
+              </div>
+              <div class="box_body">
+                <div class="dec_head">
+                  <div class="address"><span>{{ value['position']['address']}}</span></div>
+                  <div class="time"><span>2012年12月12日</span></div>
+                </div>
+                <div class="describe"><p>{{value['desc']}}</p></div>
+              </div>
+              <div class="box_footer">
+                <div class="footer_left">
+                  <div class="dianzan">
+                    {{if already.indexOf(value.id) == -1 }}
+                      <img onclick="like(this,this.name)" name="{{ value['id']}}" src="../image/like.png" id="like_{{ value['id']}}"/>
+                    {{else}}
+                      <img onclick="like(this,this.name)" name="{{ value['id']}}" src="../image/dianzan_active.png" id="like_{{ value['id']}}" />
+                    {{/if}}
+                    <!-- <img src="../image/btn_praise_highlight.png" alt=""> -->
+                    <span id="{{ value['id']}}">{{value['fav_num']}}</span>
+                  </div>
+                  <div class="pinglun" onclick="comment({{ value['id']}},this)"><img src="../image/btn_comment_highlight.png" alt=""><span id="comment_{{ value['id']}}">{{value['comment_num']}}</span></div>
+                  <div class="fanxiang" onclick="share(this)" name = "{{value['id']}}"><img src="../image/btn_share_highlight.png" alt=""><span class="fenxiang_num_{{value['id']}}">{{value['forwarding_num']}}</span></div>
+                </div>
+                <a href="#picture" class="" >  <img href="#picture" src="../image/btn_more_highlight.png" alt="" class="footer_right"></a>
+              </div>
+            </div>
+        {{/each}}
+    </script>
+
+  <header></header>
+  <div class="null"></div>
+  <div id="template_box"><div>
+
+    <div id="picture" class="mui-popover mui-popover-action mui-popover-bottom" style="margin-top:-1000px;">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" onclick="jubao()">
+					<a href="#">举报</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="#">其他</a>
+				</li>
+			</ul>
+			<!-- <ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="#picture"><b>取消</b></a>
+				</li>
+			</ul> -->
+		</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script src="../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../script/swaper/swiper.min.js"></script>
+<script type="text/javascript" src="../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../css/mui/mui.min.js"></script>
+
+
+<script type="text/javascript">
+var user_id = $api.getStorage('id');
+var zt = $api.getStorage('zt');
+//添加好友部分
+function add_friend(obj) {
+  // alert(friend_id);
+  var friend_id = $(obj).attr("name");
+  if (zt == 1) {
+    var friends = $api.getStorage('friends');
+    var friends_array = new Array();
+    if (friends != undefined) {
+      friends_array = friends;
+    }
+    api.ajax({
+        url: $api.getStorage('IPandPORT') + '/api/add_friend/',
+        method: 'post',
+        data: {
+            values: {
+                user_id:user_id,
+                delete_or_add:1,
+                friend_id:friend_id
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+            api.sendEvent({
+                name: 'add_friend2',
+                extra: {
+                  friend_id:friend_id
+                }
+            });
+            obj.setAttribute("onclick","red_friend(this,this.name)");
+            obj.innerHTML = "已关注";
+            friends_array.push(parseInt(friend_id));
+            $api.setStorage('friends', friends_array);
+            console.log('成功');
+        } else {
+          alert("添加失败")
+        }
+    });
+  }else {
+    api.openWin({
+        bounces: false,
+        name: 'login',
+        url: 'chat/win_login.html',
+        vScrollBarEnabled: false,
+        hScrollBarEnabled: false
+    });
+  }
+}
+
+function red_friend(obj) {
+  var friend_id = $(obj).attr("name");
+  if (zt == 1) {
+    var friends = $api.getStorage('friends');
+    var friends_array = new Array();
+    if (friends != undefined) {
+      friends_array = friends;
+    }
+    api.ajax({
+        url: $api.getStorage('IPandPORT') + '/api/add_friend/',
+        method: 'post',
+        data: {
+            values: {
+                user_id:user_id,
+                delete_or_add:0,
+                friend_id:friend_id
+            }
+        }
+    }, function(ret, err) {
+        if (ret) {
+            api.sendEvent({
+                name: 'red_friend2',
+                extra: {
+                  friend_id:friend_id
+                }
+            });
+            obj.setAttribute("onclick","add_friend(this,this.name)");
+            obj.innerHTML = "关注";
+            friends_array.splice(friends_array.indexOf(parseInt(friend_id)),1);
+            $api.setStorage("friends", friends_array);
+            console.log(friends_array);
+            console.log('成功');
+        } else {
+            alert("减少失败")
+        }
+    });
+  }else {
+    api.openWin({
+        bounces: false,
+        name: 'login',
+        url: 'chat/win_login.html',
+        vScrollBarEnabled: false,
+        hScrollBarEnabled: false
+    });
+  }
+}
+
+    user_id = $api.getStorage('id');
+    function like(obj,video_id) {
+      if (zt == 1) {
+        var video_already = $api.getStorage('video_already');
+        var video_array = new Array();
+        if (video_already != undefined) {
+          video_array = video_already;
+        }
+        if (obj.src == "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/like.png") {
+            obj.src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan_active.png";
+
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                method: 'post',
+                data: {
+                    values: {
+                        id: video_id,
+                        del_like: 1,
+                        user_id:user_id,
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.sendEvent({
+                        name: 'add_like_num2',
+                        extra: {
+                          video_id:video_id
+                        }
+                    });
+                    document.getElementById(video_id).innerHTML++;
+                    video_array.push(parseInt(video_id));
+                    $api.setStorage("video_already",video_array);
+                    console.log(video_array);
+                } else {
+                    // api.alert({ msg: JSON.stringify(err) });
+                    alert("点赞失败")
+                }
+            });
+
+
+            console.log(video_already);
+        } else if (obj.src == "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan_active.png") {
+            obj.src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/like.png";
+            document.getElementById(video_id).innerHTML--;
+
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                method: 'post',
+                data: {
+                    values: {
+                      id: video_id,
+                      del_like: 0,
+                      user_id:user_id,
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.sendEvent({
+                        name: 'red_like_num2',
+                        extra: {
+                          video_id:video_id
+                        }
+                    });
+                    // api.alert({ msg: JSON.stringify(ret) });
+                    video_already.splice(video_array.indexOf(parseInt(video_id)),1);
+                    $api.setStorage("video_already",video_array);
+                    console.log("赞过"+video_array);
+                } else {
+                    // api.alert({ msg: JSON.stringify(err) });
+                    console.log("取消赞失败");
+                }
+            });
+        }
+      }else {
+        api.openWin({
+            bounces: false,
+            name: 'login',
+            url: 'chat/win_login.html',
+            vScrollBarEnabled: false,
+            hScrollBarEnabled: false
+        });
+      }
+    }
+//打开分享
+    function share(video_id_name) {
+        if (zt == 1) {
+            var sharedModule = api.require('shareAction');
+            sharedModule.share({
+                text: '纯文本信息',
+                type: 'text'
+            });
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/share_num/',
+                method: 'post',
+                data: {
+                    values: {
+                        id: $(video_id_name).attr("name"),
+                        user_id: $api.getStorage('id'),
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                  // 添加分享数
+                    share_num =   $('.fenxiang_num_'+$(video_id_name).attr("name")).text()
+                    $('.fenxiang_num_'+$(video_id_name).attr("name")).text(parseInt(share_num)+1)
+                } else {
+                    alert("点赞失败");
+                }
+            });
+
+        } else {
+            api.openWin({
+                bounces: false,
+                name: 'login',
+                url: 'chat/win_login.html',
+                vScrollBarEnabled: false,
+                hScrollBarEnabled: false
+            });
+        }
+    }
+//打开评论
+function comment(i,obj) {
+  if (zt == 1) {
+    api.openFrame({
+        name: 'comment',
+        animation: {
+            type: "movein", //动画类型（详见动画类型常量）
+            subType: "from_bottom", //动画子类型（详见动画子类型常量）
+            duration: 300 //动画过渡时间，默认300毫秒
+        },
+        url: 'comment.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            id: i,
+            comment_total:$(obj).children('span').text()
+        },
+        bgColor: 'rgba(0,0,0,0)'
+    });
+  }else {
+    api.openWin({
+        bounces: false,
+        name: 'login',
+        url: 'chat/win_login.html',
+        vScrollBarEnabled: false,
+        hScrollBarEnabled: false
+    });
+  }
+}
+
+apiready = function(){
+
+  api.addEventListener({
+      name: 'add_like_num'
+  }, function(ret, err) {
+    if (document.getElementById(ret['value']['video_id'])&&document.getElementById('like_'+ret['value']['video_id'])) {
+      document.getElementById(ret['value']['video_id']).innerHTML++;
+      document.getElementById('like_'+ret['value']['video_id']).src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan_active.png";
+    }
+  });
+  api.addEventListener({
+      name: 'red_like_num'
+  }, function(ret, err) {
+    if (document.getElementById(ret['value']['video_id'])&&document.getElementById('like_'+ret['value']['video_id'])) {
+      document.getElementById(ret['value']['video_id']).innerHTML--;
+      document.getElementById('like_'+ret['value']['video_id']).src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan.png";
+    }
+  });
+
+  //home_frame评论数+1
+  api.addEventListener({
+      name: 'add_comment_num'
+  }, function(ret, err) {
+      // alert(JSON.stringify(ret))
+      ele_id = 'comment_'+ret['value']['video_id']
+      document.getElementById(ele_id).innerHTML++;
+
+  });
+  api.addEventListener({
+      name: 'add_friend'
+  }, function(ret, err) {
+    if (document.getElementById('friend_'+ret['value']['friend_id'])) {
+          document.getElementById('friend_'+ret['value']['friend_id']).setAttribute("onclick","red_friend(this,this.name)");
+          document.getElementById('friend_'+ret['value']['friend_id']).innerHTML = "已关注";
+    }
+  });
+  var video_already = $api.getStorage('video_already');
+      user_id = $api.getStorage('id');
+      function like(obj,video_id) {
+
+          if (obj.src == "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan.png") {
+              obj.src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan_active.png";
+              console.log(typeof(document.getElementById(video_id).innerHTML));
+              console.log(document.getElementById(video_id).innerHTML);
+              document.getElementById(video_id).innerHTML++;
+
+              api.ajax({
+                  url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                  method: 'post',
+                  data: {
+                      values: {
+                          id: video_id,
+                          del_like: 1,
+                          user_id:user_id,
+
+                      }
+                  }
+              }, function(ret, err) {
+                  if (ret) {
+                      // api.alert({ msg: JSON.stringify(ret) });
+                      console.log("增加");
+                  } else {
+                      // api.alert({ msg: JSON.stringify(err) });
+                      console.log("nnn");
+                  }
+              });
+
+              if (video_already.indexOf(parseInt(video_id))== -1) {
+                video_already.push(parseInt(video_id));
+              }
+              $api.setStorage("video_already",video_already);
+
+              console.log(video_already);
+          } else if (obj.src == "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan_active.png") {
+              obj.src = "file:///storage/emulated/0/UZMap/wgt/A6071385953874/image/dianzan.png";
+              console.log(parseInt(document.getElementById(video_id).innerHTML));
+              console.log(document.getElementById(video_id));
+              document.getElementById(video_id).innerHTML--;
+              alert("取消点赞");
+
+              if (video_already.indexOf(parseInt(video_id))!= - 1) {
+                video_already.splice(video_already.indexOf(parseInt(video_id)),1);
+              }
+              $api.setStorage("video_already",video_already);
+              console.log(video_already);
+              api.ajax({
+                  url: $api.getStorage('IPandPORT') + '/api/del_like/',
+                  method: 'post',
+                  data: {
+                      values: {
+                        id: video_id,
+                        del_like: 0,
+                        user_id:user_id,
+                      }
+                  }
+              }, function(ret, err) {
+                  if (ret) {
+                      // api.alert({ msg: JSON.stringify(ret) });
+                      console.log("减少");
+                  } else {
+                      // api.alert({ msg: JSON.stringify(err) });
+                      console.log("nnn");
+                  }
+              });
+          }
+      }
+
+  api.addEventListener({ //切换导航停止播放
+      name: 'stop_video_play'
+  }, function(ret, err) {
+      var video = $api.domAll('video');
+      for (var i = 0; i < video.length; i++) {
+          video[i].pause()
+      }
+  });
+
+  document.getElementById('template_box').style.height= window.innerHeight - 74 + "px";
+  var load_num = 1;    //第load_num次向服务器请求数据
+  var my_ajax = function(i){
+
+    api.ajax({
+        url: $api.getStorage('IPandPORT') + '/api/index/?page=' + i + '&id=1&size=6',
+        method: 'get',
+        data: {
+            body: {
+                name: 'haha'
+            }
+        }
+    },function(ret, err){
+        if (ret) {
+            var video_already = $api.getStorage('video_already'),
+                friends = $api.getStorage('friends');
+            var video_array = new Array();
+            var friends_array = new Array();
+            if (video_already != undefined &&friends != undefined) {
+              video_array = video_already;
+              friends_array = friends;
+            }
+            console.log("赞过"+video_array);
+            console.log("好友"+friends_array);
+            var data = {
+                list: ret,
+                already: video_array,
+                already2: friends_array
+            };
+            // alert(JSON.stringify(data['already']))
+            var html = template('template_moudle', data);
+            $('#template_box').append(html);
+            if (load_num == 1) {
+                video[0].play();
+            }
+            load_num++;
+            console.log(document.getElementById("template_box").scrollHeight);
+        } else {
+        }
+    });
+  }
+
+  my_ajax(load_num);
+
+  var content_box = document.getElementsByClassName('content_box');
+  var video = document.getElementsByTagName('video');
+  var video_num = 0;
+  console.log();
+  document.querySelector('#template_box').addEventListener('scroll',function () {
+    if (this.scrollHeight - this.scrollTop == this.clientHeight) {
+        my_ajax(load_num);
+    }
+      if (content_box[video_num].offsetTop-this.scrollTop < -25) {
+          video[video_num].pause();
+          video[video_num+1].play();
+          video_num++;
+      }
+      else if (video_num > 0) {
+          if (content_box[video_num-1].offsetTop-this.scrollTop>-25) {
+          video[video_num].pause();
+          video[video_num-1].play();
+          video_num--;
+        }
+    }
+  });
+}
+
+
+
+
+// var ret = [{"id":1,"user":{"id":2,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"ooo","first_name":"qwewq","last_name":"ewqe","email":"fdsafdsafdsafewq","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"大可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/050359448c13c50b79722434ad9345c0.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529425370634&di=8f3da65db84e42437b718547b31eacd3&imgtype=0&src=http%3A%2F%2Fd.paper.i4.cn%2Fmax%2F2016%2F10%2F19%2F13%2F1476856259329_155656.jpeg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10008,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1},{"id":2,"user":{"id":2,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"ooo","first_name":"qwewq","last_name":"ewqe","email":"fdsafdsafdsafewq","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"大可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/123.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529991395365&di=e55e7787fb4acd290f937cd7e9f600c5&imgtype=0&src=http%3A%2F%2Fpic1.win4000.com%2Fmobile%2F2018-01-18%2F5a60006fcc2bb.jpg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10000,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1},{"id":3,"user":{"id":1,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"orange","first_name":"o","last_name":"range","email":"961111111@qq.com","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"小可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/1307024d0e9075022c8d5b6c88db43b2.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529991395365&di=0b993f7fa08238a4970ac59a2f21abdb&imgtype=0&src=http%3A%2F%2Fattachments.gfan.com%2Fforum%2F201701%2F24%2F19543039z3fxijlif9qfl3.jpg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10000,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1},{"id":4,"user":{"id":1,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"orange","first_name":"o","last_name":"range","email":"961111111@qq.com","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"小可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/1352388323826823ef281a01a64d919f.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529991395364&di=d00c49b90a85a35686d2a2a3ed9e4d4e&imgtype=0&src=http%3A%2F%2Fpic4.apk8.com%2Fappsx%2F14979389972627624.jpg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10000,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1},{"id":5,"user":{"id":1,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"orange","first_name":"o","last_name":"range","email":"961111111@qq.com","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"小可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/24bc470d9ad9eb789c8053b59e906ee6.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529991395364&di=b367ca4595ca3020edca33cd876d952a&imgtype=0&src=http%3A%2F%2Fstatic01.coloros.com%2Fbbs%2Fdata%2Fattachment%2Fforum%2F201711%2F28%2F124446ywsxhk3r41w3fr4x.jpg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10000,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1},{"id":6,"user":{"id":1,"password":"123456","last_login":"2018-06-21T08:00:00+08:00","is_superuser":true,"username":"orange","first_name":"o","last_name":"range","email":"961111111@qq.com","is_staff":false,"is_active":false,"date_joined":null,"header_url":"http://img3.duitang.com/uploads/item/201505/17/20150517091947_PUcWk.thumb.700_0.jpeg","nick_name":"小可爱","code_num":"qwewqe","phone_num":0,"fav_num":0,"opus_num":0,"is_fav_num":0,"attention_num":0,"fs_num":0,"groups":[],"user_permissions":[]},"permission":"common","video_url":"http://linke.xtu.edu.cn/html/video/25afc710476172e846ac58d5080ff687.mp4","image_url":"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529991450894&di=6d2be984fb5ce51e8df60c814005f885&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D4173739230%2C1480334774%26fm%3D214%26gp%3D0.jpg","send_time":"2018-06-21T08:00:00+08:00","category":"妹子","fav_num":10000,"comment_num":123,"forwarding_num":123455,"desc":"这是伪造的数据","position":"湘潭大学","this_user_fav_or_not":"0","this_user_attention_or_not":"1","music":1,"travelsnote":1}];
+// var data = {
+//     list: ret
+// };
+// var html = template('template_moudle', data);
+// document.getElementById('template_box').innerHTML = html;
+
+var stop_or_not = 1; //暂停开始判断
+function video_stop_fun(e) {
+    if (stop_or_not == 1) {
+        e.pause();
+        stop_or_not = 2;
+        console.log('stop');
+    } else {
+        e.play();
+        stop_or_not = 1;
+        console.log('start');
+    }
+}
+
+function jubao() {
+  $('#picture').css('display','none')
+  $('.mui-backdrop-action').hide()
+  api.toast({
+    msg: '举报成功',
+    duration: 3000,
+    location: 'bottom'
+  });
+}
+
+
+</script>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/group/qun.css">
+    <link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+    <!-- <link rel="stylesheet" href="../../css/mui/mui.min.css">
+  <script type="text/javascript" src="../../css/mui/mui.min.js"></script> -->
+    <style>
+        #toux {
+            width: 5.3rem;
+            height: 5.3rem;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .bk {
+            height: 9rem;
+            background: #FFF;
+            border-bottom: 1px solid #EBEBEB;
+        }
+
+        #toux img {
+            width: 5.3rem;
+            height: 5.3rem;
+        }
+
+        .aui-list {
+            border-top: none;
+        }
+
+        @media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+            .aui-list {
+                border: none;
+                background-size: 100% 0px;
+            }
+        }
+
+        .fl {
+            font-size: 0.9rem;
+            color: #646464
+        }
+
+        .aa {
+            color: #646464;
+            height: 8rem;
+        }
+
+        .upimg {
+            position: relative;
+            top: 3.4rem;
+            left: 40%;
+            font-size: 1.4rem;
+            color: #FFFFFF;
+            z-index: 88888;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="aui-bar aui-bar-nav" id="head">
+        <a class="aui-pull-left aui-btn" tapmode onclick="back()"> <span class="aui-iconfont aui-icon-left"></span></a>
+        <div class="aui-title" style="font-size:0.9rem;font-weight: none;">
+            完善个人信息
+        </div>
+        <a class="aui-pull-right upp" tapmode onclick="up()">完成</a>
+    </header>
+    <div class="bk" tapmode onclick="upimg()">
+        <div id="toux" style="">
+            <i class="aui-iconfont aui-icon-camera upimg" style="position:relative; top:00px;left:80px; color:#fff;"></i>
+            <img src="../../image/group/group_header.png" id="qun_tx">
+            <span style="width:1200px; color:#6C6C6C;">点击添加头像</span>
+        </div>
+
+        <div id="tx" style="display: none">
+            http://a11827977e9deabc63d5.test.upcdn.net/apicloud/b8348ea89e85636bc8784133234ded69.jpg
+        </div>
+    </div>
+    <div class="aui-card-list">
+        <div class="aui-content aui-margin-15">
+            <ul class="aui-list aui-form-list">
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label">
+                            昵称
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" maxlength="10" placeholder="昵称" id="nicheng" class="aa">
+                        </div>
+                    </div>
+                </li>
+
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label">
+                            生日
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" placeholder="生日" readonly="readonly" id="birth" class="" onclick='open_birth_select()'>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label">
+                            性别
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" placeholder="性别" readonly="readonly" onclick='open_sex_select()' id="sex" class="">
+                        </div>
+                    </div>
+                </li>
+
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-label">
+                            签名
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" maxlength="50" placeholder="签名" id='desc'>
+                        </div>
+                    </div>
+                </li>
+
+
+
+            </ul>
+        </div>
+    </div>
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    <div class="canvas">
+        <div id="clipArea"></div>
+        <div id="view"></div>
+    </div>
+    <div id="anniu">
+        <a style="color:#069">选择操作</a>
+        <div class="btn-2" tapmode onclick="save()">
+            <button>
+					截取头像
+				</button>
+        </div>
+        <div class="btn-3" tapmode onclick="quxiao()">
+            <button>
+					取 消
+				</button>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/group/api.js"></script>
+<script type="text/javascript" src="../../script/group/jquery.js"></script>
+<script type="text/javascript" src="../../script/group/sha1.min.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+        $api.fixStatusBar($api.byId('head'));
+        $api.val($api.byId('nicheng'), $api.getStorage('zh'));
+        $api.byId('qun_tx').src = $api.getStorage('tx');
+        $api.val($api.byId('birth'), $api.getStorage('birth'));
+        $api.val($api.byId('sex'), $api.getStorage('sex'));
+        $api.val($api.byId('desc'), $api.getStorage('desc'));
+
+    }
+
+
+    function open_birth_select() {
+        api.openPicker({
+            type: 'date_time',
+            date: '2000-01-01 01:01',
+            title: '选择时间'
+        }, function(ret, err) {
+            if (ret) {
+                $api.val($api.byId('birth'), ret['year'] + '-' + ret['month'] + '-' + ret['day']);
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function open_sex_select() {
+        api.actionSheet({
+            buttons: ['男', '女']
+        }, function(ret, err) {
+            var index = ret.buttonIndex;
+            if (index == 1) {
+                $api.val($api.byId('sex'), '男');
+            } else if (index == 2) {
+                $api.val($api.byId('sex'), '女');
+            }
+        });
+    }
+
+    function upimg() {
+        api.actionSheet({
+            title: '上传头像',
+            cancelTitle: '取消',
+            buttons: ['手机拍照', '手机相册']
+        }, function(ret, err) {
+            if (ret) {
+                getPicture(ret.buttonIndex);
+            }
+        });
+    }
+
+    function getPicture(sourceType) {
+        //相机拍照
+        if (sourceType == 1) {
+            api.getPicture({
+                sourceType: 'camera',
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'url'
+            }, function(ret, err) {
+                // 获取拍照图像并剪辑
+                if (ret) {
+                    $(".canvas").fadeIn(300);
+                    $("#anniu").addClass("show");
+                    var FNImageClip = api.require('FNImageClip');
+                    FNImageClip.open({
+                        rect: {
+                            x: 0,
+                            y: 0,
+                            w: api.winWidth,
+                            h: api.winHeight - document.querySelector('#anniu').offsetHeight
+                        },
+                        srcPath: ret.data,
+                        mode: 'image',
+                        style: {
+                            mask: 'rgba(0,0,0,0.75)',
+                            clip: {
+                                w: 250,
+                                h: 250,
+                                x: (api.frameWidth - 250) / 2,
+                                y: (api.frameHeight - 250) / 2.6,
+                                borderColor: '#0f0',
+                                borderWidth: 1,
+                                appearance: 'rectangle'
+                            }
+                        },
+                    }, function(ret, err) {});
+                }
+            });
+        } else if (sourceType == 2) {
+            //手机相册选图片
+            api.getPicture({
+                sourceType: 'album',
+                encodingType: 'jpg',
+                mediaValue: 'pic',
+                destinationType: 'url'
+            }, function(ret, err) {
+                if (ret.data.length > 0) {
+                    $(".canvas").fadeIn(300);
+                    $("#anniu").addClass("show");
+                    var FNImageClip = api.require('FNImageClip');
+                    FNImageClip.open({
+                        rect: {
+                            x: 0,
+                            y: 0,
+                            w: api.winWidth,
+                            h: api.winHeight - document.querySelector('#anniu').offsetHeight
+                        },
+                        srcPath: ret.data,
+                        mode: 'image',
+                        style: {
+                            mask: 'rgba(0,0,0,0.75)',
+                            clip: {
+                                w: 250,
+                                h: 250,
+                                x: (api.frameWidth - 250) / 2,
+                                y: (api.frameHeight - 250) / 2.6,
+                                borderColor: '#0f0',
+                                borderWidth: 0,
+                                appearance: 'rectangle'
+                            }
+                        },
+                    }, function(ret, err) {});
+                }
+            });
+        }
+    }
+
+    //保存剪辑图像
+    function save() {
+        var nubs = nub(1000, 3000);
+        $api.css($api.dom('.spinner'), 'display: block');
+        var FNImageClip = api.require('FNImageClip');
+        var model = api.require('model');
+        FNImageClip.save({
+            destPath: 'fs://tx_' + nubs + '.jpg',
+            copyToAlbum: false,
+            quality: 0.6
+        }, function(ret, err) {
+            var qun_tx = ret.destPath;
+            FNImageClip.close();
+            model.uploadFile({
+                report: false,
+                data: {
+                    file: {
+                        url: qun_tx
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    $api.setStorage('create_new_header_img', ret['url']); //存头像
+                    $api.css($api.dom('.spinner'), 'display: none');
+                    $api.byId('qun_tx').src = ret.url;
+                    $api.text($api.byId('tx'), ret.url);
+                    api.toast({
+                        msg: '头像上传成功',
+                        duration: 3000,
+                        location: 'bottom'
+                    });
+                } else {
+                    api.toast({
+                        msg: '头像上传失败',
+                        duration: 3000,
+                        location: 'bottom'
+                    });
+                }
+            });
+            $(".canvas").hide();
+            $("#anniu").removeClass("show");
+            FNImageClip.close();
+        });
+    }
+
+    function nub(minNum, maxNum) {
+        switch (arguments.length) {
+            case 1:
+                return parseInt(Math.random() * minNum + 1);
+                break;
+            case 2:
+                return parseInt(Math.random() * (maxNum - minNum + 1) + minNum);
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+
+
+    function up() {
+        var nicheng = $api.val($api.byId('nicheng'));
+        var birth = $api.val($api.byId('birth'));
+        var sex = $api.val($api.byId('sex'));
+        var desc = $api.val($api.byId('desc'));
+        api.closeFrame({
+            name: 'user_header'
+        });
+
+
+        if (nicheng.length < 2 || nicheng.length > 20) {
+            api.toast({
+                msg: '昵称长度为2-10个字符',
+                duration: 3000,
+                location: 'bottom'
+            });
+        } else {
+
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/change_user_info/',
+                method: 'post',
+                data: {
+                    values: {
+                        birth: birth,
+                        sex: sex,
+                        nicheng: nicheng,
+                        id: $api.getStorage('id'),
+                        desc: desc,
+                        header_url: $api.getStorage('create_new_header_img')
+                    }
+                }
+            }, function(ret, err) {
+                if (ret['status'] == 1) {
+                    api.toast({
+                        msg: '设置完成',
+                        duration: 3000,
+                        location: 'bottom'
+                    });
+                    var id = ret['user']['id'],
+                        zh = ret['user']['nick_name'],
+                        tx = ret['user']['header_url'],
+                        birth = ret['user']['birth'],
+                        sex = ret['user']['sex'],
+                        desc = ret['user']['desc']
+                    $api.setStorage('zh', zh); //昵称
+                    $api.setStorage('birth', birth); //id
+                    $api.setStorage('sex', sex); //id
+                    $api.setStorage('desc', desc); //id
+                    $api.setStorage('id', id); //id
+                    $api.setStorage('tx', tx); //touxiang
+                    $api.setStorage('zt', 1);
+                    api.sendEvent({
+                        name: 'complete_set'
+                    });
+                    back()
+                }else {
+                  api.sendEvent({
+                      name: 'login'
+                  });
+                }
+            })
+        }
+    }
+
+
+
+
+    function back() {
+        api.closeWin({});
+    }
+</script>
+
+</html>

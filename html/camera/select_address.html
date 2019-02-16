@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <script type="text/javascript" src="../../script/group/jquery.min.js"></script>
+    <script type="text/javascript" src="../../script/group/amazeui.min.js"></script>
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: #F5F5F5;
+        }
+
+        header {
+            /*display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-self: center;
+            padding-top: 25px;
+            height: 45px;
+            width: 100%;
+            background: #fff;
+            border-bottom: rgb(204, 204, 204) solid 4px;*/
+            margin-top: 20px;
+            box-shadow: 0 0px 0px #fff!important;
+            -webkit-box-shadow: 0 0px 0px #fff!important;
+            background-color: #fff!important;
+        }
+
+        .address_list {
+            height: 60px;
+            position: static;
+            border-bottom: 1px #F5F5F5 solid;
+        }
+
+        .list_name {
+            font-size: 16px;
+        }
+
+        .list_address {
+            color: #7B7B7B;
+            font-size: 14px;
+        }
+
+        .address_list {
+            padding-top: 5px;
+            list-style: none;
+            border-bottom: 1px #EDEBEB solid;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <header>
+        <button onclick="back()" class="back"><</button>
+        <span class="title">发布</span>
+        <div style="width: 30px;"></div>
+    </header> -->
+    <div style="background-color:#fff;height:20px;"> </div>
+    <header id="header" class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" onclick="back()"></a>
+        <h1 class="mui-title">定位</h1>
+    </header>
+
+    <script id="address_list" type="text/html">
+        {{each list value i}}
+        <li class="address_list" name="{{value['coord']['lat']}},{{value['coord']['lon']}}" onclick="select(this)">
+            <div class="list_name">{{value['name']}}</div>
+            <div class="list_address">{{value['address']}}</div>
+        </li>
+        {{/each}}
+    </script>
+
+    <ul class="" id='address_list_ul' style="margin-top:250px;position: static;">
+
+    </ul>
+
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script>
+    function back() {
+        api.closeFrame({
+            name: 'select_address'
+        });
+    }
+
+    apiready = function() {
+      
+        open_map()
+        get_location()
+        get_address_list($api.getStorage('lon'), $api.getStorage('lat'))
+    }
+
+    function open_map() {
+        var map = api.require('bMap');
+        map.open({
+            rect: {
+                x: 0,
+                y: 60,
+                w: 'auto',
+                h: 200
+            },
+            center: {
+                lon: $api.getStorage('lon'),
+                lat: $api.getStorage('lat')
+            },
+            zoomLevel: 10,
+            showUserLocation: true,
+            fixedOn: api.frameName,
+            fixed: true,
+            showMapPoi: true
+        }, function(ret) {
+            if (ret.status) {
+            }
+        });
+    }
+
+
+
+
+    function get_location() {
+        var baiduLocation = api.require('baiduLocation');
+        baiduLocation.startLocation({
+            accuracy: '100m',
+            filter: 1,
+            autoStop: true
+        }, function(ret, err) {
+            if (ret.status) {
+                var baiduLocation = api.require('baiduLocation');
+                baiduLocation.getLocation(function(ret, err) {
+                    if (ret) {
+                        // 获取地理位置
+                        $api.setStorage('lon', ret['longitude']);
+                        $api.setStorage('lat', ret['latitude']);
+                    } else {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+    }
+
+    function get_address_list(lon, lat) {
+        var map = api.require('bMap');
+        map.getNameFromCoords({
+            lon: lon,
+            lat: lat
+        }, function(ret, err) {
+            if (ret.status) {
+                var data = {
+                    list: ret['poiList']
+                };
+                var html = template('address_list', data);
+                document.getElementById('address_list_ul').innerHTML = html;
+                // console.log(JSON.stringify(ret));
+            }
+        });
+    }
+
+
+
+
+
+    function select(obj) {
+        var str = $(obj).attr('name'),
+            lat = str.split(",")[0],
+            lon = str.split(",")[1],
+            name = $(obj).children(".list_name").text(),
+            address = $(obj).children(".list_address").text()
+
+            api.sendEvent({
+                name: 'select_data_get',
+                extra: {
+                    lat : lat,
+                    lon : lon,
+                    name : name,
+                    address : address
+                }
+            });
+        back()
+    }
+
+    function back() {
+        api.closeFrame({
+            name: 'select_address'
+        });
+    }
+</script>
+
+
+
+</html>

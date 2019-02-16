@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <style>
+        /*关注页面头部搜索*/
+
+        .header_search {
+            line-height: 48px;
+            text-align: center;
+        }
+
+        .search_img {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+
+        .search_img_right {
+            height: 22px;
+            align-self: flex-start;
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .message_search {
+            padding-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            height: 48px;
+            background-color: #fff;
+        }
+
+        .meg_text {
+            width: 50%;
+            font-size: 20px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .header_search_add {
+            width: 20%;
+            display: flex;
+        }
+
+        .xiaoxi {
+            font-weight: bold;
+            width: 50%;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .jindian {
+            ;
+            text-align: left;
+            font-weight: bold;
+            padding-left: 5px;
+            width: 50%;
+        }
+
+        .larger_font {
+            font-size: 20px color: #494747;
+        }
+
+        .smaller_font {
+            font-size: 16px;
+            color: #A7A2A2;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 头部搜索 -->
+    <div class="message_search">
+        <div class="header_search header_search_add" onclick="opensearch()">
+            <img class="search_img" src="../../image/messagePage/btn_search_highlight.png" alt="">
+        </div>
+        <div class="header_search meg_text">
+
+            <div class="xiaoxi larger_font" onclick="open_attention()">
+                关注
+            </div>
+            <div class="jindian smaller_font" onclick="open_views()">
+                景点
+            </div>
+        </div>
+        <div class="header_search header_search_add">
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+
+<script type="text/javascript">
+    apiready = function() {
+        // 事件监听
+        api.addEventListener({
+            name: 'guanzhu'
+        }, function(ret, err) {
+            big_atten()
+        })
+        api.addEventListener({
+            name: 'jindian'
+        }, function(ret, err) {
+            big_views()
+        })
+    };
+    // 设置framegroup前后
+    function open_attention() {
+        big_atten()
+        api.setFrameGroupIndex({
+            name: 'attention',
+            index: 0
+        });
+    }
+
+    function open_views() {
+        big_views()
+        api.setFrameGroupIndex({
+            name: 'attention',
+            index: 1
+        });
+    }
+    // 调整头部字号大小
+    function big_atten() {
+        $api.removeCls($api.dom('.xiaoxi'), 'smaller_font');
+        $api.addCls($api.dom('.xiaoxi'), 'larger_font');
+        $api.removeCls($api.dom('.jindian'), 'smaller_font');
+        $api.addCls($api.dom('.jindian'), 'smaller_font');
+    }
+
+    function big_views() {
+        $api.removeCls($api.dom('.xiaoxi'), 'larger_font');
+        $api.addCls($api.dom('.xiaoxi'), 'smaller_font');
+        $api.removeCls($api.dom('.jindian'), 'smaller_font');
+        $api.addCls($api.dom('.jindian'), 'larger_font');
+    }
+
+    function opensearch() {
+        api.openWin({
+            name: 'search',
+            url: '../search.html',
+            pageParam: {
+                name: 'test'
+            }
+        });
+    }
+</script>
+
+</html>

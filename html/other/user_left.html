@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .video_container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .video_item {
+            height: 300px;
+            width: 49.5%;
+            /*background-color: yellow;*/
+            margin-bottom: 3px;
+            border-radius: 0.5em;
+            display: flex;
+        }
+
+        .map_address {
+            width: 100%;
+            height: 80px;
+            position: relative;
+            top: 215px;
+        }
+
+        .map_address_head {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .map_address_distance {
+            width: 60%;
+            margin-left: 4%;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .map_address_distance img {
+            height: 12px;
+            margin-right: 4px;
+        }
+
+        .map_address_distance_num {
+            width: 30%;
+            display: inline-block;
+            font-size: 10px;
+            margin-right: 4%;
+            margin-top: 1px;
+        }
+
+        .video_text {
+            font-size: 12px;
+            padding: 0 5px;
+            color: #E5E8EB;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .video_user {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-top: 5px;
+            height: 15px;
+            color: #E5E8EB;
+            /*background: #777;*/
+        }
+
+        .user_header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 60%;
+            height: 100%;
+            font-size: 12px;
+            margin-left: 4%;
+            /*background: #456;*/
+        }
+
+        .user_header span {
+            display: block;
+            height: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            /*background: #985*/
+        }
+
+        .user_header img {
+            height: 15px;
+            margin-right: 4px;
+            border-radius: 50%;
+        }
+
+        .user_header_time {
+            width: 30%;
+            display: inline-block;
+            font-size: 10px;
+            margin-top: -1px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <script id="interpolationtmpl" type="text/html">
+        {{each list value i}}
+        <div class="video_item" id={{ value[ 'id']}} onclick=open_atten_video(this.id) style="background:url({{ value[ 'image_url']}}) no-repeat  center;background-size:100% 100%;">
+            <div class="map_address">
+                <div class="map_address_head">
+                    <div class="map_address_distance">
+                        <img src="../../image/attention/disabledbtn_location_disable.png" alt="" style=""> {{ value[ 'position']['name']}}
+                    </div>
+                    <div class="map_address_distance_num">
+                        距离200KM
+                    </div>
+                </div>
+                <div class="video_text">
+                    {{ value[ 'desc']}}
+                </div>
+                <div class="video_user">
+                    <div class="user_header">
+                        <img src="{{ value['user'][ 'header_url']}}" alt="">
+                        <span style="position: relative;top: -3px;">
+                            {{ value['user'][ 'nick_name']}}
+                        </span>
+                    </div>
+                    <div class="user_header_time">
+                        24分钟前
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
+    <div class="video_container" id="interpolation" style="color:#fff;">
+    </div>
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript">
+    // 加载关注视频列表
+    var vodeo_atten_data = [],
+        attention_index = 1,
+        page = 1,
+        allow_user_touch_up = true, //上次数据没加载完不允许用户再次加载
+        user_id = ''
+    apiready = function() {
+        user_id = api.pageParam['user_id']
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#fff',
+            isScale: true,
+            loadAnimInterval: 100,
+            image: {
+                pull: [
+                    'widget://image/a3zs6l69.jpg',
+                ],
+                load: [
+                    'widget://image/a3zs6l69.jpg',
+                ]
+            }
+        }, function() {
+            again_get_data($api.getStorage('id'), 1)
+            setTimeout(function () {
+                  api.refreshHeaderLoadDone();
+            },5000)
+        });
+
+        again_get_data($api.getStorage('id'), 1)
+
+
+
+        // 监听下滑到底部
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (allow_user_touch_up == true) {
+                allow_user_touch_up = false
+                again_get_data($api.getStorage('id'),page)
+                page++;
+            } else {
+                console.log('数据没加载完不允许加载');
+            }
+
+        });
+    }
+
+
+
+
+    function again_get_data(i, page) {
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/api/my_center_timeline/',
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                body: {
+                    id: user_id,
+                    page: page,
+                    size: 6
+                }
+            }
+        }, function(ret, err) {
+            // 模板语法渲染
+            if (ret) {
+                if (ret.length == 0) {
+                             api.toast({
+    msg: '你还没有作品，快去发布新作品吧',
+    duration: 3000,
+    location: 'bottom'
+  });
+                }
+                if (page==1) {
+                    vodeo_atten_data= ret
+                }else {
+                  for (var i = 0; i < ret.length; i++) {
+                      vodeo_atten_data.push(ret[i])
+                  }
+                }
+
+                allow_user_touch_up = true
+                change_data_change_dom(vodeo_atten_data)
+                api.refreshHeaderLoadDone();
+            } else {
+            setTimeout(function () {
+                  api.refreshHeaderLoadDone();
+            },5000)
+  //                         api.toast({
+  //   msg: '网络请求超时了噢',
+  //   duration: 3000,
+  //   location: 'bottom'
+  // });
+            }
+        });
+    }
+
+    function change_data_change_dom(i) {
+        var data = {
+            list: i
+        };
+        var html = template('interpolationtmpl', data);
+        document.getElementById('interpolation').innerHTML = html;
+    }
+
+    // 打开关注页面视频播放进入的frame
+    function open_atten_video(id) {
+        var vodeo_jsondata = ''
+        for (var i = 0; i < vodeo_atten_data.length; i++) {
+            if (id == vodeo_atten_data[i]['id']) {
+                console.log(vodeo_atten_data[i]);
+                vodeo_jsondata = vodeo_atten_data[i]
+            }
+        }
+
+        api.openFrame({
+            name: 'attention_video_play',
+            url: '../attention_video_play.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                name: vodeo_jsondata
+            },
+            bounces: true,
+            bgColor: 'rgba(0,0,0,0)',
+            vScrollBarEnabled: true,
+            hScrollBarEnabled: true,
+            animation: {
+              type: "push",
+              subType: "from_right",
+              duration: 500
+            }
+        });
+    }
+</script>
+
+</html>

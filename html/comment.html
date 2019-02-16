@@ -1,0 +1,522 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/htmleaf-demo.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/style.css" />
+    <style>
+        * {
+            background: rgba(255, 0, 0, 0.0)!important;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+
+        .top {
+            height: 30%;
+            width: 100%;
+        }
+
+        .box {
+            height: 70%;
+            background: #fff!important;
+        }
+
+        .comments {
+            background: #321311;
+        }
+
+        .input {
+            display: flex!important;
+            flex-direction: row!important;
+            align-items: center!important;
+            border-top: 1px solid #f5f5f5!important;
+            width: 100%!important;
+            height: 60px!important;
+            background: #fff!important;
+        }
+
+        input {
+            margin-bottom: 0;
+            margin-left: 10px!important;
+            width: 80%!important;
+            height: 50%!important;
+            outline: none!important;
+        }
+
+        .box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        .box>span {
+            margin: 13px 0;
+            font-size: 13px;
+            color: #999;
+        }
+
+        ul {
+            width: 100%;
+        }
+
+        li {
+            display: flex;
+            flex-direction: row;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .user_head {
+            box-sizing: border-box;
+            border: 1px solid #666;
+            border-radius: 50%;
+            margin-left: 10px;
+            width: 40px;
+            min-width: 40px;
+            height: 40px;
+            background: #777!important;
+            overflow: hidden;
+        }
+
+        .user_head img {
+            width: 100%;
+        }
+
+        .like {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 10px;
+            width: 30px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .like img {
+            width: 30px;
+        }
+
+        .comment_box {
+            padding: 0 15px 0 15px;
+            width: auto;
+            height: auto;
+        }
+
+        .comment_text {
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .user_name {
+            font-size: 13px;
+            line-height: 14px;
+            color: #666;
+        }
+
+        .send {
+            margin: 0 auto;
+            color: #999
+        }
+
+        .comment_text {
+            margin: 3px 0;
+            font-size: 13px;
+            line-height: 16px;
+            color: #000;
+        }
+
+        .time {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .comments_box {
+            width: 100%;
+            height: 85%;
+            overflow: auto;
+        }
+
+        .bubblingG {
+            text-align: center;
+            width: 78px;
+            height: 50px!important;
+            margin: auto;
+            display: block;
+        }
+
+        .bubblingG span {
+            display: inline-block;
+            vertical-align: middle;
+            width: 10px;
+            height: 10px;
+            margin: 24px auto;
+            background: rgb(0, 0, 0);
+            border-radius: 49px;
+            -o-border-radius: 49px;
+            -ms-border-radius: 49px;
+            -webkit-border-radius: 49px;
+            -moz-border-radius: 49px;
+            animation: bubblingG 1.5s infinite alternate;
+            -o-animation: bubblingG 1.5s infinite alternate;
+            -ms-animation: bubblingG 1.5s infinite alternate;
+            -webkit-animation: bubblingG 1.5s infinite alternate;
+            -moz-animation: bubblingG 1.5s infinite alternate;
+        }
+
+        #bubblingG_1 {
+            animation-delay: 0s;
+            -o-animation-delay: 0s;
+            -ms-animation-delay: 0s;
+            -webkit-animation-delay: 0s;
+            -moz-animation-delay: 0s;
+        }
+
+        #bubblingG_2 {
+            animation-delay: 0.45s;
+            -o-animation-delay: 0.45s;
+            -ms-animation-delay: 0.45s;
+            -webkit-animation-delay: 0.45s;
+            -moz-animation-delay: 0.45s;
+        }
+
+        #bubblingG_3 {
+            animation-delay: 0.9s;
+            -o-animation-delay: 0.9s;
+            -ms-animation-delay: 0.9s;
+            -webkit-animation-delay: 0.9s;
+            -moz-animation-delay: 0.9s;
+        }
+
+        @keyframes bubblingG {
+            0% {
+                width: 10px;
+                height: 10px;
+                background-color: rgb(0, 0, 0);
+                transform: translateY(0);
+            }
+            100% {
+                width: 23px;
+                height: 23px;
+                background-color: rgb(255, 255, 255);
+                transform: translateY(-20px);
+            }
+        }
+
+        @-o-keyframes bubblingG {
+            0% {
+                width: 10px;
+                height: 10px;
+                background-color: rgb(0, 0, 0);
+                -o-transform: translateY(0);
+            }
+            100% {
+                width: 23px;
+                height: 23px;
+                background-color: rgb(255, 255, 255);
+                -o-transform: translateY(-20px);
+            }
+        }
+
+        @-ms-keyframes bubblingG {
+            0% {
+                width: 10px;
+                height: 10px;
+                background-color: rgb(0, 0, 0);
+                -ms-transform: translateY(0);
+            }
+            100% {
+                width: 23px;
+                height: 23px;
+                background-color: rgb(255, 255, 255);
+                -ms-transform: translateY(-20px);
+            }
+        }
+
+        @-webkit-keyframes bubblingG {
+            0% {
+                width: 10px;
+                height: 10px;
+                background-color: rgb(0, 0, 0);
+                -webkit-transform: translateY(0);
+            }
+            100% {
+                width: 23px;
+                height: 23px;
+                background-color: rgb(255, 255, 255);
+                -webkit-transform: translateY(-20px);
+            }
+        }
+
+        @-moz-keyframes bubblingG {
+            0% {
+                width: 10px;
+                height: 10px;
+                background-color: rgb(0, 0, 0);
+                -moz-transform: translateY(0);
+            }
+            100% {
+                width: 23px;
+                height: 23px;
+                background-color: rgb(255, 255, 255);
+                -moz-transform: translateY(-20px);
+            }
+        }
+
+        .total_top {
+            font-size: 14px;
+            color: rgb(123, 116, 115);
+        }
+
+        .box_top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid rgb(233, 231, 231);
+        }
+
+        .box_top div {
+            margin: 15px;
+            width: 15px;
+            height: 15px;
+        }
+
+        .box_top img {
+            width: 100%;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <!-- 数据填充模板 -->
+    <script id="template_content" type="text/html">
+        {{each list value i}}
+        <li>
+            <div class="user_head"><img src="{{value['user']['header_url']}}" /></div>
+            <div class="comment_box">
+                <div class="user_name">{{value['user']['nick_name']}}</div>
+                <div class="comment_text">{{value['comment']}}</div>
+                <div class="time">{{value['created_time']*1000 | dateFormat:'yyyy年 MM月 dd日'}}</div>
+            </div>
+        </li>
+        {{/each}}
+    </script>
+    <!-- 填充模板结束 -->
+
+    <div class="top" onclick="close_frame()"></div>
+    <div class="box">
+        <div class="box_top">
+            <div></div>
+            <span class="total_top">评论（<span class="total">123</span>）</span>
+            <div onclick="close_frame()"><img src="../image/cha.png" /></div>
+        </div>
+        <div class="comments_box">
+
+            <ul class="comments" id="template_box">
+                <!-- 模板渲染目标地点 -->
+            </ul>
+
+            <div class="bubblingG">
+                <span id="bubblingG_1">
+              </span>
+                <span id="bubblingG_2">
+              </span>
+                <span id="bubblingG_3">
+              </span>
+            </div>
+        </div>
+
+        <div class="input">
+            <input class="send_text" type="text" name="fname" maxlength="55" placeholder="说点什么？" />
+            <div class="send_btn" onclick="send_comment()">发送</div>
+        </div>
+
+
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script src="../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../script/superslide.2.1.js"></script>
+<script type="text/javascript">
+    template.defaults.imports.dateFormat = function(date, format) {
+        if (typeof date === "string") {
+            var mts = date.match(/(\/Date\((\d+)\)\/)/);
+            if (mts && mts.length >= 3) {
+                date = parseInt(mts[2]);
+            }
+        }
+        date = new Date(date);
+        if (!date || date.toUTCString() == "Invalid Date") {
+            return "";
+        }
+
+        var map = {
+            "M": date.getMonth() + 1, //月份
+            "d": date.getDate(), //日
+            "h": date.getHours(), //小时
+            "m": date.getMinutes(), //分
+            "s": date.getSeconds(), //秒
+            "q": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds() //毫秒
+        };
+        format = format.replace(/([yMdhmsqS])+/g, function(all, t) {
+            var v = map[t];
+            if (v !== undefined) {
+                if (all.length > 1) {
+                    v = '0' + v;
+                    v = v.substr(v.length - 2);
+                }
+                return v;
+            } else if (t === 'y') {
+                return (date.getFullYear() + '').substr(4 - all.length);
+            }
+            return all;
+        });
+        return format;
+    };
+
+    var video_id = "";
+    apiready = function() {
+
+        video_id = api.pageParam['id'];
+        $('.total').text(api.pageParam['comment_total'])
+        var load_num = 1; //第load_num次向服务器请求评论数据
+        //ajax请求函数
+        function my_ajax(page) {
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/video_comment/?page=' + page + '&size=6&video_id=' + api.pageParam['id'],
+                method: 'get',
+                data: {}
+            }, function(ret, err) {
+                if (ret) {
+                    if(ret["status"] == undefined){
+                      once = 0;
+                      load_num++;
+                      var data = {
+                          list: ret
+                      };
+                      //渲染模板开始
+                      var html = template('template_content', data);
+                      $('#template_box').append(html);
+                      $('.bubblingG').css("display", 'none');
+
+                    }else{
+                      document.getElementsByClassName('bubblingG')[0].innerHTML = "---  没有更多咯  ---";
+                      document.getElementsByClassName('bubblingG')[0].style.width = "100%";
+                      document.getElementsByClassName('bubblingG')[0].style.height = "70px";
+                      document.getElementsByClassName('bubblingG')[0].style.lineHeight = "60px";
+                      document.getElementsByClassName('bubblingG')[0].style.color = "#999";
+                    }
+                } else {
+                    console.log("nnn");
+                }
+            });
+        }
+        //第一次请求数据
+        my_ajax(load_num);
+        // api.ajax({
+        //   url: $api.getStorage('IPandPORT')+'/api/video_comment/',
+        //   method: 'post',
+        //   data: {
+        //     values: {
+        //       user_id:1,
+        //       video_id:1,
+        //       comment:"从前有座山"
+        //         }
+        //   }
+        //   }, function(ret, err) {
+        //   if (ret) {
+        //       // api.alert({ msg: JSON.stringify(ret) });
+        //       console.log("yyy");
+        //   } else {
+        //       console.log("nnn");
+        //   }
+        // });
+
+        document.querySelector('.comments_box').addEventListener('scroll', function() {
+            //意思就是内容总体的高度 - 滚动条的偏移值  === 元素的高度(包含内边)但不包含外边距，边框，以及滚动条
+            if (this.scrollHeight - this.scrollTop === this.clientHeight && once == 0) {
+                $('.bubblingG').css("display", 'block');
+                once = 1;
+                // 第load_num次请求数据
+                my_ajax(load_num);
+            }
+        })
+    }
+
+    function close_frame() {
+        api.closeFrame({
+            name: 'comment'
+        });
+    }
+
+    //发送评论部分
+    function send_comment() {
+        $('.comments_box,ul').animate({
+            scrollTop: '0px'
+        }, 100);
+        var send_text = $('.send_text');
+        if (send_text.val().length == 0) {} else {
+
+            var data = {
+                list: [{
+                    "comment": send_text.val(),
+                    "user": {
+                        "nick_name": $api.getStorage('zh'),
+                          'header_url': $api.getStorage('tx')
+                    },
+                    "created_time": Date.parse(new Date())/1000
+                }]
+            };
+            //渲染模板开始
+            var html = template('template_content', data);
+            $('#template_box').prepend(html);
+            var text = $("input").val();
+            $('input').attr("value", "");
+            api.ajax({
+                url: $api.getStorage('IPandPORT') + '/api/video_comment/',
+                method: 'post',
+                data: {
+                    values: {
+                        user_id: $api.getStorage("id"),
+                        video_id: video_id,
+                        comment: text
+                    }
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    api.sendEvent({   //home_frame评论数+1
+                        name: 'add_comment_num',
+                        extra: {
+                          video_id:video_id
+                        }
+                    });
+                    // 设置顶部评论数量
+                    comment_num_head = parseInt($('.total').text())+1
+                    $('.total').text(comment_num_head)
+                    // api.alert({ msg: JSON.stringify(ret) });
+                } else {
+                    console.log("nnn");
+                }
+            });
+        }
+    }
+</script>
+
+</html>

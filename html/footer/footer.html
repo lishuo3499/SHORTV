@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/htmleaf-demo.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/style.css" />
+    <style media="screen">
+        body,
+        html {
+            height: 50px!important;
+            overflow: hidden;
+        }
+
+        .waveWrapper {
+            /*position: absolute;*/
+            height: 60px!important;
+            z-index: -999;
+            /*top: 10px;*/
+        }
+
+        .waveWrapperInner {
+            background: none!important;
+        }
+
+        .waveWrapper {
+            margin: 0!important;
+        }
+
+        .htmleaf-container {
+            height: 50px;
+        }
+        /*.waveWrapperInner{
+  height:50px;
+  background-size: 100% 100%;
+}*/
+
+        ul,
+        li {
+            margin: 0;
+            padding: 0;
+        }
+        /*#myscroll{
+        width: 300px;
+        height: 300px;
+        margin: -50px auto 0;
+        overflow: hidden;
+        position: relative;
+    }
+    #myscroll ul{
+        float: left;
+        width: 300px;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .bolang_pic{
+        height: 50px;
+        width: 100%;
+        background: url(../../image/bolang.png);
+        background-size: 100% 100%;
+    }*/
+
+        footer {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            box-sizing: border-box;
+            padding-top: 10px;
+            height: 50px;
+            background-color: rgba(250, 250, 250, 0.0);
+            /*border-top: 1px solid #ccc;*/
+        }
+
+        footer>div {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            width: 100%;
+            height: 50px;
+            color: rgb(165, 165, 165);
+            font-size: 12px;
+            text-align: center;
+            padding-bottom: 4px;
+            padding-top: 35px;
+            background-repeat: no-repeat;
+            background-position: center 6px;
+            background-size: auto 35px;
+        }
+
+        footer>div:nth-child(1) {}
+
+        footer>div:nth-child(2) {}
+
+        footer>div:nth-child(3) {}
+
+        footer>div:nth-child(4) {}
+
+        footer>div:nth-child(1).active {
+            background-image: url(./image/footer/home_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        footer>div:nth-child(2).active {
+            background-image: url(./image/footer/groupbuy_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        footer>div:nth-child(3).active {
+            background-image: url(./image/footer/find_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        footer>div:nth-child(4).active {
+            background-image: url(./image/footer/my_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        body {
+            background: none!important;
+        }
+        .menu{
+          background-position:top  center;
+          margin-bottom: 50px;
+          background-size:40px 40px
+        }
+        .line{
+        border-top:1px #EBEBED solid;
+        }
+    </style>
+</head>
+
+<body class="">
+    <footer id="footer" style="">
+        <div class="menu" tapmode="active" onclick="fnChange(0,this)" style="background-image: url(../../image/footer/tab0_active.png);"></div>
+        <div class="menu" tapmode="active" disabled="true" onclick="fnChange(1,this)" style="background-image: url(../../image/footer/tab1.png);"></div>
+        <div class="menu" tapmode="active" onclick="fnChange(2,this)" style="background-image: url(../../image/footer/tab2.png); background-size:40px 40px;margin-top:-5px;"></div>
+        <div class="menu" tapmode="active" onclick="fnChange(3,this)" style="background-image: url(../../image/footer/tab3.png);">
+            <div class="aui-dot" id='point_small_news' style="margin-right:20px;"></div>
+        </div>
+        <div class="menu" tapmode="active" onclick="fnChange(4,this)" style="background-image: url(../../image/footer/tab4.png);"></div>
+
+    </footer>
+
+    <div class="htmleaf-container">
+        <div class="waveWrapper waveAnimation">
+            <div class="waveWrapperInner bgTop">
+                <div class="wave waveTop" style="background-image: url('../../image/wave/wave-top.png');  "></div>
+            </div>
+            <div class="waveWrapperInner bgMiddle">
+                <div class="wave waveMiddle" style="background-image: url('../../image/wave/wave-mid.png')  "></div>
+            </div>
+            <div class="waveWrapperInner bgBottom">
+                <div class="wave waveBottom" style="background-image: url('../../image/wave/wave-bot.png')  "></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../../script/superslide.2.1.js"></script>
+
+
+
+
+<script type="text/javascript">
+    apiready = function() {
+
+    };
+
+    var footer_array = ['index', 'attention', 'camera', 'message', 'login'];
+    var tabs = document.getElementsByClassName('menu'),
+        this_btn = 0
+
+    function fnChange(i, obj) {
+
+
+
+        if (i != this_btn) {
+          if (i == 0) {
+
+              $api.removeCls($api.dom('body'), 'line');
+              api.setFrameAttr({
+                  name: 'footer',
+                  bgColor: 'rgba(0,0,0,0)'
+              });
+          } else {
+              $api.addCls($api.dom('body'), 'line');
+              api.setFrameAttr({
+                  name: 'footer',
+                  bgColor: '#fff'
+              });
+          }
+            this_btn = i
+
+
+            api.sendEvent({
+                name: 'close_list'
+            });
+            for (var j = 0; j < 5; j++) {
+                if (i == j && j != 2) {
+                    tabs[i].setAttribute("style", "background-image: url(../../image/footer/tab" + i + "_active.png);");
+                } else if (i != j && j != 2) {
+                    tabs[j].setAttribute("style", "background-image: url(../../image/footer/tab" + j + ".png);");
+                }
+            }
+
+
+
+
+
+            if (i != 0) {
+                var login = login_or_not();
+                if (login == true) {
+                    api.sendEvent({
+                        name: footer_array[i],
+                        extra: {
+                            key1: i,
+                        }
+                    });
+                    api.sendEvent({
+                        name: "stop_video_play", //开始播放事件
+                        extra: {
+                            key1: i,
+                        }
+                    });
+                }
+            } else {
+                api.sendEvent({
+                    name: footer_array[0],
+                    extra: {
+                        key1: 0,
+                    }
+                });
+            }
+
+        } else {  // alert('不会出发了')
+        }
+
+    }
+
+
+
+    // 判断本地是否登录
+    function login_or_not() {
+        var zt = $api.getStorage('zt')
+        if (zt == 1) {
+            return true
+        } else {
+            api.openWin({
+                name: 'login_page',
+                url: '../group/frame_login.html',
+                pageParam: {
+                    name: 'test'
+                }
+            });
+        }
+    }
+</script>
+
+</html>

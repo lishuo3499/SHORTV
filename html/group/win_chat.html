@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<style type="text/css">
+			#tx {
+				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				display: inline;
+				position: absolute;
+				top: 7px;
+				left: 3px;
+			}
+			.aui-title span {
+				font-size: 0.6rem;
+				padding-left: 0.5rem
+			}
+			.aui-bar-nav {
+				background-color: #272727;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav" id="head">
+			<a class="aui-btn aui-pull-left" tapmode onclick="closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title" id='user_name'>
+				李宇春
+			</div>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js"></script>
+	<script type="text/javascript" src="../../script/group/sha1.min.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			api.parseTapmode();
+			var html = '';
+			var id = api.pageParam.id;
+			var tx = api.pageParam.tx;
+			var zh = api.pageParam.zh;
+			$api.text($api.byId('user_name'),zh)
+			$api.fixStatusBar($api.byId('head'));
+			var head_h = $api.offset($api.byId('head')).h;
+			api.openFrame({
+				name : 'frame_chat',
+				url : 'frame_chat.html',
+				bgColor : 'f5f5f5',
+				rect : {
+					x : 0,
+					y : head_h,
+					w : 'auto',
+					h : api.winHeight - head_h - 52
+				},
+				hScrollBarEnabled : false,
+				vScrollBarEnabled : false,
+				pageParam : {
+					head_h : head_h,
+					id : id,
+					zh : zh,
+					tx : tx
+				}
+			});
+			var appKey = "e5t4ouvpe670a";
+			var appSecret = "CtuQTLNeFbg";
+			var nonce = Math.floor(Math.random() * 1000000);
+			var timestamp = Date.now();
+			var signature = sha1("" + appSecret + nonce + timestamp);
+			api.ajax({
+				url : "http://api.cn.ronghub.com/user/checkOnline.json",
+				method : "post",
+				headers : {
+					"RC-App-Key" : appKey,
+					"RC-Nonce" : "" + nonce,
+					"RC-Timestamp" : "" + timestamp,
+					"RC-Signature" : "" + signature,
+					"Content-Type" : "application/x-www-form-urlencoded"
+				},
+				data : {
+					values : {
+						userId : id
+					}
+				}
+			}, function(ret, err) {
+				if (ret.code == 200 && ret.status == 1) {
+					// html += api.pageParam.zh + '<span>[在线]</span>';
+					// $api.html($api.dom('.aui-title'), html);
+				} else {
+					// html += api.pageParam.zh + '<span>[离线]</span>';
+					// $api.html($api.dom('.aui-title'), html);
+				}
+			});
+		};
+		function closeWin() {
+			api.closeWin({
+			});
+		}
+	</script>
+</html>

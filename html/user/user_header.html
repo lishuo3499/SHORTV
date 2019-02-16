@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+    <style>
+        html {
+            width: 100%;
+            height: 100%;
+            background: url(../../image/touxiang.jpg);
+            background-size: 100%;
+            border-bottom: 1px solid rgb(120, 85, 255);
+            /*-webkit-filter: blur(px)*/
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .header_box {
+            /*height: 250px;*/
+        }
+
+        .wrap1 {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px;
+        }
+
+        .wrap2 {
+            display: flex;
+            flex-direction: column;
+            margin: 15px;
+        }
+
+        .user_header {
+            border: 1px solid #fff;
+            border-radius: 50%;
+            height: 60px;
+            width: 60px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .user_btns {
+            display: flex;
+            flex-direction: row;
+            width: 120px;
+        }
+
+        .transmit {
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+            background: url(../../image/user/btn_share_highlight.png) no-repeat;
+            background-size: 25px;
+        }
+
+        .add_friend {
+            width: 40px;
+            height: 40px;
+            margin-right: 20px;
+            background: url(../../image/user/btn_addfriend_highlight.png) no-repeat;
+            background-size: 25px;
+        }
+
+        .etc {
+            width: 30px;
+            height: 30px;
+            background: url(../../image/user/btn_more_highlight.png) no-repeat;
+            background-size: 25px;
+            background-position: 0px 10px;
+        }
+
+        .user_name {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .user_id {
+            margin-bottom: 15px;
+            font-size: 10px;
+            opacity: 0.8;
+            color: #fff;
+        }
+
+        .user_message {
+            font-weight: bolder;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .nav_box {
+            background: #fff;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 36px;
+            background: #fff;
+            background: url(../../image/user/choosen1.png) no-repeat;
+            background-size: 55% 100%;
+        }
+
+        .nav2 {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 36px;
+            background: #fff;
+            background: url(../../image/user/choosen2.png) no-repeat;
+            background-size: 55% 100%;
+            background-position: right;
+        }
+
+        .left {
+            width: 50%;
+            text-align: center;
+            font-size: 16px;
+            color: rgb(25, 160, 255);
+        }
+
+        .right {
+            width: 50%;
+            text-align: center;
+            font-size: 16px;
+            color: rgb(25, 160, 255);
+        }
+
+        .active {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div></div>
+
+    <script id="user_header_template" type="text/html">
+        <div class="wrap1">
+            <div class="user_header"><img onclick='change_user_data()' id='user_header_bac' style="width:100%;" src="{{user_data[0]['header_url']}}"></div>
+            <div class="user_btns">
+                <div class="transmit"></div>
+                <div class=""></div>
+                <div class="etc" onclick="open_action_sheet()"></div>
+            </div>
+        </div>
+        <div class="wrap2">
+            <div class="user_name">{{user_data[0]['nick_name']}}</div>
+            <div class="user_id">ID号：<span class="id_num">{{user_data[0]['id']}}</span></div>
+            <div class="user_message"><span class="dianzan">{{user_data[0]['is_fav_num']}}</span>获赞 &nbsp;&nbsp; <span class="guanzhu">{{user_data[0]['attention_num']}}</span>关注 &nbsp;&nbsp; <span class="fensi">{{user_data[0]['fs_num']}}</span>粉丝</div>
+        </div>
+    </script>
+
+    <div class="header_box" id="header_box_par">
+    </div>
+
+    <div class="nav_box">
+        <div class="nav" id="nav_bg">
+            <div class="left active" onclick="left(this)" id="left">足迹</div>
+            <div class="right" onclick="right(this)" id="right">喜欢</div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../../script/api.js"></script>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../../script/open_loading.js"></script>
+<script type="text/javascript">
+    user_id = $api.getStorage('id')
+    apiready = function() {
+        // $api.rmStorage('id')   //清除用户缓存数据
+        get_home_free_data(user_id)
+        open_user_center_left()
+        bring_load_to_index() //带loading回最前面
+        api.addEventListener({
+            name: 'login'
+        }, function(ret, err) {
+            // 打开头部用户界面
+            open_user_center_left()
+            left($api.dom('.left'))
+        });
+
+        api.addEventListener({
+            name: 'complete_set'
+        }, function(ret, err) {
+            // ; //昵称
+            // $api.getStorage('birth'); //id
+            // $api.getStorage('sex'); //id
+            // $api.getStorage('desc'); //id
+            // $api.getStorage('id'); //id
+            $('#user_header_bac').attr("src", $api.getStorage('create_new_header_img'))
+            $("html").css({
+                "background-image": "url(" + $api.getStorage('create_new_header_img') + ")"
+            });
+            $api.text($api.dom('.user_name'), $api.getStorage('zh'))
+        });
+    }
+
+
+
+
+    function get_home_free_data(i) {
+        api.ajax({
+            url: $api.getStorage('IPandPORT') + '/user/my_center_data/',
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                body: {
+                    id: i
+                }
+            }
+        }, function(ret, err) {
+
+            if (ret) {
+                var data = {
+                    user_data: ret
+                };
+                var html = template('user_header_template', data);
+                document.getElementById('header_box_par').innerHTML = html;
+                var user_header_bacground = $("#user_header_bac").attr("src")
+                $("html").css({
+                    "background-image": "url(" + user_header_bacground + ")"
+                });
+            } else {
+                alert(JSON.stringify(err))
+            }
+        });
+    }
+
+
+    function open_user_center_left() {
+
+
+        api.openFrame({
+            name: 'user_left',
+            url: 'user_left.html',
+            bounces:false,
+            rect: {
+                x: 0,
+                y: 249,
+                w: 'auto',
+                h: api.winHeight - 249-50
+            },
+            pageParam: {
+                name: 'test'
+            },
+
+        });
+
+
+        // api.bringFrameToFront({
+        //     from: 'footer',
+        //     //  to: 'index'
+        // });
+    }
+
+    //左右切换
+    function left(obj) {
+        $api.removeCls($api.byId('nav_bg'), 'nav2');
+        $api.removeCls($api.byId('right'), 'active');
+        $api.addCls(obj, 'active');
+        api.bringFrameToFront({
+            from: 'user_left',
+        });
+        api.bringFrameToFront({
+            from: 'footer',
+        });
+    }
+
+    function right(obj) {
+        $api.addCls($api.byId('nav_bg'), 'nav2');
+        $api.removeCls($api.byId('left'), 'active');
+        $api.addCls(obj, 'active');
+        var i = 0;
+        if (i < 1) {
+            i++;
+            api.openFrame({
+                name: 'user_right',
+                url: 'user_right.html',
+                rect: {
+                    x: 0,
+                    y: 249,
+                    w: 'auto',
+                    h: api.winHeight - 249-50
+                },
+                pageParam: {
+                    name: 'test'
+                }
+                // bounces: true,
+                // bgColor: 'rgba(0,0,0,0)',
+                // vScrollBarEnabled: true,
+                // hScrollBarEnabled: true
+            });
+        }
+        api.bringFrameToFront({
+            from: 'user_right',
+            to: 'user_left'
+        });
+        // api.bringFrameToFront({
+        //     from: 'footer',
+        // });
+    }
+
+
+    function open_action_sheet() {
+        api.openFrame({
+            name: 'user_setting',
+            url: 'user_setting.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+
+            },
+            bgColor: '#fff',
+            animation: {
+                type: "push",
+                subType: "from_right",
+                duration: 200
+            }
+        });
+
+    }
+
+    function change_user_data() {
+      api.openWin({
+          bounces: false,
+          name: 'change_user_data',
+          url: 'user_change_info.html',
+          vScrollBarEnabled: false
+      });
+    }
+</script>
+
+</html>

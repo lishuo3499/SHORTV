@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+</head>
+<script src="../../script/api.js"></script>
+
+
+
+<script type="text/javascript">
+apiready = function () {
+  var pageParam = api.pageParam,
+      video_url = pageParam.data_open
+
+  var videoPlayer = api.require('videoPlayer');
+  videoPlayer.open({
+    fixed:false,
+    fixedOn:'videomodel',
+      texts: {
+          head: {
+              title: '顶部文字'
+          }
+      },
+      rect:{
+        x: 0,   //（可选项）数字类型；模块左上角的 x 坐标（相对于所属的 Window 或 Frame）；默认：0
+        y: 0,   //（可选项）数字类型；模块左上角的 y 坐标（相对于所属的 Window 或 Frame）；默认：0
+        w: api.frameWidth, //（可选项）数字类型；模块的宽度；默认：所属的 Window 或 Frame 的宽度
+         h: api.frameHeight   //（可选项）数字类型；模块的高度；默认：w的3/4
+      },
+      styles: {
+
+          head: {
+              bg: 'rgba(0.5,0.5,0.5,0.7)',
+              height: 44,
+              titleSize: 20,
+              titleColor: '#fff',
+              backSize: 44,
+              backImg: 'fs://img/back.png',
+              setSize: 44,
+              setImg: 'fs://img/set.png'
+          },
+          foot: {
+              bg: 'rgba(0.5,0.5,0.5,0.7)',
+              height: 44,
+              playSize: 44,
+              playImg: 'fs://img/back.png',
+              pauseImg: 'fs://img/back.png',
+              nextSize: 44,
+              nextImg: 'fs://img/back.png',
+              timeSize: 14,
+              timeColor: '#fff',
+              sliderImg: 'fs://img/slder.png',
+              progressColor: '#696969',
+              progressSelected: '#76EE00'
+          }
+      },
+     path: 'http://1253881240.vod2.myqcloud.com/37a1ae01vodgzp1253881240/1b4834107447398156238804129/WVfuOXb7ccIA.mp4',
+      // path:video_url,
+      autoPlay: true, //（可选项）布尔类型；打开时是否自动播放；默认：true（自动播放）
+
+  }, function(ret, err) {
+
+  });
+
+          //   path: 'http://1253881240.vod2.myqcloud.com/37a1ae01vodgzp1253881240/1b4834107447398156238804129/WVfuOXb7ccIA.mp4',
+
+//单击播放器事件
+var sratror = 1
+var videoPlayer = api.require('videoPlayer');
+videoPlayer.addEventListener({
+  name: 'click'
+}, function(ret, err) {
+
+if (sratror == 1) {
+var videoPlayer = api.require('videoPlayer');
+  videoPlayer.pause();
+   sratror = 2
+}else {
+var videoPlayer = api.require('videoPlayer');
+  videoPlayer.start();
+   sratror = 1
+}
+
+});
+// 点击返回关闭视频播放
+  var moviePlayer = api.require('moviePlayer');
+  moviePlayer.addEventListener(function(ret){
+      if(ret && ret.eventType == 'back'){
+        api.closeWin({
+            name: 'openVideo',
+            animation:{
+  type:"push",                //动画类型（详见动画类型常量）
+  subType:"from_top",       //动画子类型（详见动画子类型常量）
+  duration:300                //动画过渡时间，默认300毫秒
+}
+        });
+      }
+  });
+}
+</script>

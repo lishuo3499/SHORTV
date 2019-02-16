@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<style type="text/css">
+			.aui-bar-nav {
+				background-color: #272727;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="aui-bar aui-bar-nav" id="head">
+			<a class="aui-btn aui-pull-left" tapmode onclick="closeWin()"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title"></div>
+			<a class="aui-pull-right aui-btn" tapmode onclick="open_group_index()"> <span class="aui-iconfont aui-icon-home"></span> </a>
+		</header>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js"></script>
+	<script type="text/javascript">
+	 var qun_id=''
+		apiready = function() {
+			api.parseTapmode();
+			var html = '';
+			var qun_id = api.pageParam.qun_id;
+			var qun_zh = api.pageParam.qun_zh;
+			var qun_tx = api.pageParam.qun_tx;
+			html += api.pageParam.qun_zh;
+			$api.html($api.dom('.aui-title'), html);
+			$api.fixStatusBar($api.byId('head'));
+			var head_h = $api.offset($api.byId('head')).h;
+			api.openFrame({
+				name : 'frame_qun',
+				url : 'frame_qun.html',
+				bgColor : 'f5f5f5',
+				rect : {
+					x : 0,
+					y : head_h,
+					w : 'auto',
+					h : api.winHeight - head_h - 52
+				},
+				hScrollBarEnabled : false,
+				vScrollBarEnabled : false,
+				pageParam : {
+					head_h : head_h,
+					qun_id : qun_id,
+					qun_zh : qun_zh,
+					qun_tx : qun_tx
+				}
+			});
+		};
+		function closeWin() {
+			api.closeWin({
+			});
+		}
+
+		function open_group_index() {
+			api.openFrame({
+				name: 'group_index',
+				url: '../circle/group_index.html',
+				bgColor: '#fff',
+				rect: {
+					x: 0,
+					y: 0,
+					w: 'auto',
+					h: 'auto'
+				},
+				vScrollBarEnabled: false,
+				scrollEnabled: false,
+				pageParam: {
+					id: api.pageParam.qun_id
+				}
+			});
+		}
+	</script>
+</html>

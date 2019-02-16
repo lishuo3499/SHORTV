@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/pull_down.css" />
+    <link rel="stylesheet" href="../../css/mui/mui.min.css">
+    <style>
+    body{
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      margin: 0;
+      padding-right: 1px;
+      padding-bottom: 100px;
+      background: #f5f5f5;
+      overflow-y: auto;
+    }
+    .content{
+      /*position: relative;
+      box-sizing: border-box;*/
+      border-left: 1px solid #fff;
+      border-top: 1px solid #fff;
+      width: 33.3%;
+      height: 160px;
+      float: left;
+      overflow: hidden;
+      /*background: url(../../image/picture1.png);*/
+    }
+    .address{
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      width: 80%;
+      height: 15px;
+      font-size: 10px;
+      line-height: 15px;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    </style>
+</head>
+<script id="wrapper_timeline_video" type="text/html">
+  {{each list value i}}
+<div class='content' id={{ value[ 'id']}} onclick=open_atten_video(this.id)><img style="height:100%;width:100%;" src="{{value['video']['image_url']}}"/><div class='address'>{{value['video']['desc']}} </div></div>
+{{/each}}
+</script>
+
+
+<body class="wrapper">
+  <div class="video_container" id="interpolation" style="color:#fff;">
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../script/common.js"></script>
+<script src="../../script/template_js/template-web.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../../css/mui/mui.min.js"></script>
+  <script src="../../script/group/mui.pullToRefresh.js"></script>
+  <script src="../../script/group/mui.pullToRefresh.material.js"></script>
+<script>
+
+var page = 2,
+allow_user_touch_up = true, //上次数据没加载完不允许用户再次加载
+user_left_data_arr='',
+user_id = $api.getStorage('id')
+mui.init();
+(function($) {
+    $.ready(function() {
+        //循环初始化所有下拉刷新，上拉加载。
+        $.each(document.querySelectorAll('body'), function(index, pullRefreshEl) {
+            $(pullRefreshEl).pullToRefresh({  down: {  callback: function() {
+                        var self = this;
+                       get_home_free_data($api.getStorage('id'),1)
+                        setTimeout(function() {
+                            self.endPullDownToRefresh();
+
+                        }, 1000);  }  },  });  });});})(mui);
+apiready=function () {
+
+  get_home_free_data(user_id,1)
+
+  // api.setCustomRefreshHeaderInfo({
+  //     bgColor: '#fff',
+  //     isScale: true,
+  //     loadAnimInterval: 100,
+  //     image: {
+  //         pull: [
+  //             'widget://image/a3zs6l69.jpg',
+  //
+  //         ],
+  //         load: [
+  //             'widget://image/a3zs6l69.jpg',
+  //
+  //         ]
+  //     }
+  // }, function() {
+  //       get_home_free_data(user_id,1)
+  // });
+
+  // 监听下滑到底部
+  api.addEventListener({
+      name: 'scrolltobottom'
+  }, function(ret, err) {
+      if (allow_user_touch_up == true) {
+          allow_user_touch_up = false
+          get_home_free_data(user_id,page)
+          page++;
+      } else {
+          console.log('数据没加载完不允许加载');
+      }
+
+  });
+
+
+}
+
+
+
+function get_home_free_data(i,p) {
+    api.ajax({
+        url: $api.getStorage('IPandPORT') + '/api/center_fav/',
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            body: {
+                user_id: i,
+                page:p,
+                size:12
+            }
+        }
+    }, function(ret, err) {
+      var data = {
+          list: ret
+      };
+        if (ret) {
+          var html = template('wrapper_timeline_video', data);
+          if (p == 1) {
+            // alert(JSON.stringify(ret))
+            user_left_data_arr = ret
+              document.getElementById('interpolation').innerHTML = html;
+              api.refreshHeaderLoadDone();
+          } else {
+            for (var i = 0; i < ret.length; i++) {
+                user_left_data_arr.push(ret[i])
+            }
+              allow_user_touch_up = true //改为true允许用户再次加载
+              $("#interpolation").append(html)
+          }
+        } else {
+            // alert(JSON.stringify(err))
+        }
+    });
+}
+
+
+
+// 打开关注页面视频播放进入的frame
+function open_atten_video(id) {
+    var vodeo_jsondata = ''
+    for (var i = 0; i < user_left_data_arr.length; i++) {
+        if (id == user_left_data_arr[i]['id']) {
+            user_left_data_arr[i]['video_url']=user_left_data_arr[i]['video']['video_url']
+            user_left_data_arr[i]['image_url']=user_left_data_arr[i]['video']['image_url']
+            user_left_data_arr[i]['send_time']=user_left_data_arr[i]['video']['send_time']
+            user_left_data_arr[i]['category']=user_left_data_arr[i]['video']['category']
+            user_left_data_arr[i]['fav_num']=user_left_data_arr[i]['video']['fav_num']
+            user_left_data_arr[i]['comment_num']=user_left_data_arr[i]['video']['comment_num']
+            user_left_data_arr[i]['permission']=user_left_data_arr[i]['video']['permission']
+            user_left_data_arr[i]['forwarding_num']=user_left_data_arr[i]['video']['forwarding_num']
+            user_left_data_arr[i]['desc']=user_left_data_arr[i]['video']['desc']
+            user_left_data_arr[i]['position']=user_left_data_arr[i]['video']['position']
+            user_left_data_arr[i]['this_user_fav_or_not']=user_left_data_arr[i]['video']['this_user_fav_or_not']
+            user_left_data_arr[i]['this_user_attention_or_not']=user_left_data_arr[i]['video']['this_user_attention_or_not']
+            user_left_data_arr[i]['music']=user_left_data_arr[i]['video']['music']
+            user_left_data_arr[i]['travelsnote']=user_left_data_arr[i]['video']['travelsnote']
+            vodeo_jsondata = user_left_data_arr[i]
+        }
+    }
+
+    api.openFrame({
+        name: 'attention_video_play',
+        url: '../attention_video_play.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: 'auto',
+            h: 'auto'
+        },
+        pageParam: {
+            name: vodeo_jsondata
+        },
+        bounces: true,
+        bgColor: 'rgba(0,0,0,0)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true,
+        animation: {
+          type: "push",
+          subType: "from_right",
+          duration: 500
+        }
+    });
+}
+
+</script>
+
+</html>

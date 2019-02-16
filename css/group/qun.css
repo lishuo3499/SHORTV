@@ -1,0 +1,44 @@
+﻿@charset "utf-8";
+#anniu { 
+   background:#ebebeb; 
+   height:163px; 
+   width:100%; 
+   position:fixed;
+   left:0;
+   bottom:-143px;
+   visibility:hidden;
+   z-index:999;
+    -webkit-transform:translate3d(0px,0,0px);
+	-moz-transform:translate3d(0px,0,0px);
+	transform:translate3d(0px,0,0px);
+	transition:all 0.3s; 
+ } 
+ #anniu.show {
+	 visibility:visible;
+    -webkit-transform:translate3d(0px,-143px,0px);
+	-moz-transform:translate3d(0px,-143px,0px);
+	transform:translate3d(0px,-143px,0px);
+ }
+#anniu a { display:block; width:100%; text-align:center; height:40px; background:#fff; color:#333; line-height:40px; border-bottom:1px solid #ebebeb; font-size:16px; position:relative;  }
+
+/*图片裁剪-触屏设备*/
+.clearfix:before,
+.clearfix:after{content: " ";display: table;}
+.clearfix:after{clear: both;}
+.canvas{margin: 0 auto;text-align: center;overflow: hidden;width: 100%;height: 100%;position: fixed;top: 0;background: #383838;display: none;z-index:996;}
+footer, header{display: block;}
+#clipArea{height: 90%;}
+
+/*上传图标*/
+.button{float: left;height: 100%;display: inline-block;outline: 0 none;margin: 0;cursor: pointer;border: 0;width:100%; background:#fff; }
+#anniu a input[type=file]{position: absolute;top: 0;left: 0;bottom: 0;border: 0;padding: 0;margin: 0; height:100%; width: 100%; cursor: pointer; border: solid 1px #ddd;opacity: 0;}
+input[type=button]::-moz-focus-inner{padding: 0;border: 0 none;-moz-box-sizing: content-box;}
+input[type=button]::-webkit-focus-inner{padding: 0;border: 0 none;-webkit-box-sizing: content-box;}
+.btn-1{margin-top: 1rem;margin-bottom: 2rem;text-align: center}
+.btn-1 button{width: 90%;outline: none;border: none; background: #009bdb;color: #fff; height:40px; display: inline-block;border-radius: 0.3rem; font-size:16px; }
+.btn-2{margin-top: 0.6rem;margin-bottom: 0.5rem;text-align: center}
+.btn-2 button{width: 90%;outline: none;border: none; background: #009bdb;color: #fff; height:40px; display: inline-block;border-radius: 0.3rem; font-size:16px; }
+.btn-3{text-align: center;}
+.btn-3 button{width: 90%;outline: none;border: none; background: #F05D4B;color: #fff; height:40px; display: inline-block;border-radius: 0.3rem; font-size:16px; }
+.btn-4{text-align: center;margin-top: 1rem;}
+.btn-4 button{width: 80%;outline: none;border: none; background: #00A47B;color: #fff; height:40px; display: inline-block;border-radius: 0.3rem; font-size:0.84rem; }

@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>APICloud APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/htmleaf-demo.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/wave/style.css" />
+    <style media="screen">
+        body {
+            background: none;
+        }
+
+        header {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            line-height: 98px;
+            color: #fff;
+        }
+
+        .recommend,
+        .travel {
+            opacity: 0.75;
+        }
+
+        .active {
+            font-size: 18px;
+            opacity: 1!important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="left active" onclick="left(this)" id="left">首页推荐</div>
+        <div style="width: 10px; height: 100%;"></div>
+        <div class="right" onclick="right(this)" id="right">旅行模式</div>
+    </header>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="../../script/superslide.2.1.js"></script>
+
+
+
+
+<script type="text/javascript">
+var zt = $api.getStorage('zt');
+    apiready = function() {
+      api.addEventListener({
+        name: 'refresh'
+      }, function(ret, err) {
+        window.location.href=window.location.href;
+      });
+
+    }
+
+
+    //头部点击左右切换
+    function left(obj) {
+
+        api.bringFrameToFront({
+            from: 'index0',
+            // to: 'index1'
+        });
+        api.bringFrameToFront({
+            from: 'index_header',
+            // to: 'index0'
+        });
+        api.bringFrameToFront({
+            from: 'footer',
+            // to: 'index0'
+        });
+        api.sendEvent({
+            name: 'start_video_play', //开始播放事件
+        });
+        api.sendEvent({
+            name: 'home_frame0_video_stop', //停止homeframe0播放事件
+        });
+    }
+
+
+
+
+</script>
+
+</html>

@@ -1,0 +1,588 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+	<style type="text/css">
+		.aui-list-item.wechat-top {
+			background-color: #f3f3f7;
+		}
+
+		.aui-list .wechat-avatar {
+			width: 3rem;
+		}
+
+		.wechat-avatar .aui-row-padded {
+			background-color: #dddee0;
+			padding: 0.1rem;
+			border-radius: 0.2rem;
+			margin-left: -0.05rem;
+			margin-right: -0.05rem;
+		}
+
+		.wechat-avatar,
+		.wechat-avatar>img {
+			border-radius: 0.4rem;
+		}
+
+		.aui-list {
+			border-top: none;
+		}
+
+		@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+			.aui-list {
+				border: none;
+				background-size: 100% 0px;
+			}
+		}
+
+		.menus {
+			padding-left: 1rem;
+			padding-right: 1rem;
+			background: #FFFFFF;
+			margin-bottom: 0.5rem;
+		}
+
+		.aui-tab-item {
+			color: #555;
+			font-size: 0.8rem;
+		}
+
+		#qunzu,
+		#haoyou {
+			display: none;
+		}
+
+		.aui-badge {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="aui-searchbar" id="search">
+		<div class="aui-searchbar-input aui-border-radius" tapmode onclick="opensearch()">
+			<i class="aui-iconfont aui-icon-search"></i>
+			<form action="javascript:search();">
+				<input type="search" placeholder="搜索群名称或群ID" id="search-input">
+			</form>
+		</div>
+	</div>
+	<div class="aui-content aui-margin-b-10">
+		<ul class="aui-list aui-list-in">
+			<li class="aui-list-item">
+				<div class="aui-list-item-label-icon">
+					<i class="aui-iconfont aui-icon-mail aui-text-success"></i>
+				</div>
+				<div class="aui-list-item-inner aui-list-item-arrow" onclick="msg()">
+					<div class="aui-list-item-title">
+						系统消息
+					</div>
+					<div class="aui-badge" style="position:relative;top:0; left:0">
+						1
+					</div>
+				</div>
+			</li>
+			<li class="aui-list-item" onclick="qun_add()">
+				<div class="aui-list-item-label-icon">
+					<i class="aui-iconfont aui-icon-my aui-text-danger"></i>
+				</div>
+				<div class="aui-list-item-inner aui-list-item-arrow">
+					<div class="aui-list-item-title">
+						创建群组
+					</div>
+					<div class="aui-list-item-right"></div>
+				</div>
+			</li>
+		</ul>
+	</div>
+
+	<div class="menus">
+		<div class="aui-tab" id="tab">
+			<div class="aui-tab-item aui-active">
+				好 友
+			</div>
+			<div class="aui-tab-item">
+				群 组
+			</div>
+
+		</div>
+	</div>
+	<div class="aui-content aui-margin-b-15" id="haoyou">
+
+	</div>
+	<div class="aui-content aui-margin-b-15" id="qunzu">
+		<ul class="aui-list aui-media-list" id="qun_list"></ul>
+		<ul class="aui-list aui-media-list" id="qun_list1"></ul>
+	</div>
+	<!-- <div class="spinner">
+		<div class="bounce1"></div>
+		<div class="bounce2"></div>
+		<div class="bounce3"></div>
+	</div> -->
+</body>
+<script type="text/javascript" src="../../script/group/api.js"></script>
+<script type="text/javascript" src="../../script/group/aui-tab.js"></script>
+<script type="text/javascript" src="../../script/group/aui-dialog.js"></script>
+<script type="text/javascript">
+	user_id = $api.getStorage('id')
+	my_friends = $api.getStorage('my_friends')
+	var friend_data = []
+	apiready = function() {
+		get_friend_data(user_id) //更新好友列表
+			// var inter = setTimeout(function() {
+		var UIListView = api.require('UIListView'); //加载好友列表
+		UIListView.open({
+			rect: {
+				x: 0,
+				y: 185,
+				w: api.winWidth,
+				h: api.frameHeight - 185
+			},
+			data: $api.getStorage('my_friends'),
+			rightBtns: [{
+				bgColor: '#E74C3C',
+				activeBgColor: '#F66458',
+				width: 70,
+				title: '删除',
+				titleSize: 12,
+				titleColor: '#fff',
+				icon: '',
+				iconWidth: 20
+			}],
+			styles: {
+				borderColor: '#E6E7E7',
+				item: {
+					bgColor: '#fff',
+					activeBgColor: '#F5F5F5',
+					height: 70,
+					imgWidth: 40,
+					imgHeight: 40,
+					imgCorner: 4,
+					placeholderImg: '',
+					titleSize: 16.0,
+					titleColor: '#000',
+					subTitleSize: 12.0,
+					subTitleColor: '#000',
+					remarkColor: '#898989',
+					remarkSize: 12,
+					remarkIconWidth: 30
+				}
+			},
+			fixedOn: api.frameName
+		}, function(ret, err) { //这个函数点击就触发了
+			// 删除消息列表里面的内容
+			if (ret['btnIndex'] == 0) {
+				if (ret['index'] || ret['index'] == 0) {
+					deleteitemmsg(ret['index'])
+				}
+			} else {
+				if (ret['index'] || ret['index'] == 0) { //点击消息框
+					var UIListView = api.require('UIListView');
+					UIListView.getDataByIndex({
+						index: ret['index']
+					}, function(ret, err) {
+						if (ret) {
+							alert(JSON.stringify(ret))
+							li(ret['data']['uid'], ret['data']['title'], ret['data']['imgPath']) //进入聊天窗口
+						} else {
+							alert(JSON.stringify(err));
+						}
+					});
+
+				}
+			}
+		});
+		// }, 1000)
+
+
+
+		// 好友列表下拉刷新
+		var UIListView = api.require('UIListView');
+		UIListView.setRefreshHeader({
+			loadingImg: 'widget://res/UIListView_arrow.png',
+			bgColor: '#F5F5F5',
+			textColor: '#8E8E8E',
+			textDown: '下拉可以刷新...',
+			textUp: '松开开始刷新...',
+			showTime: true
+		}, function(ret, err) {
+			// $api.rmStorage('my_friends')
+			get_friend_data(user_id)
+			var inter = setTimeout(function() {
+				var UIListView = api.require('UIListView');
+				UIListView.reloadData({
+					data: $api.getStorage('my_friends')
+				}, function(ret) {
+					// alert(JSON.stringify($api.getStorage('my_friends')))
+				});
+			}, 1000)
+			if (ret) {
+				// alert(JSON.stringify(ret));
+			} else {
+				// alert(JSON.stringify(err));
+			}
+		});
+
+
+		$api.fixStatusBar($api.dom('.aui-bar-nav'));
+		$api.css($api.dom("#haoyou"), 'display:block');
+		qun_list();
+		qun_list1();
+		xxshu();
+		api.addEventListener({
+			name: 'ok'
+		}, function(ret, err) {
+			qun_list();
+			qun_list1();
+		});
+		api.addEventListener({
+			name: 'jinru'
+		}, function(ret, err) {
+			$api.css($api.dom('.aui-badge'), 'display: none');
+		});
+		api.addEventListener({
+			name: 'yz'
+		}, function(ret, err) {
+			if (ret.value.glid == $api.getStorage("id")) {
+				xxshu();
+			} else if (ret.value.uid == $api.getStorage("id")) {
+				xxshu1();
+			}
+		});
+		api.addEventListener({
+			name: 'chuli'
+		}, function(ret, err) {
+			xxshu();
+			qun_list();
+			qun_list1();
+		});
+
+		api.addEventListener({
+			name: 'close_list'
+		}, function(ret, err) {
+			close_friend_list_frame()
+		});
+		api.addEventListener({
+			name: 'show_list'
+		}, function(ret, err) {
+			open_friend_list_frame()
+		});
+	}
+
+
+
+	function close_friend_list_frame() {
+		var UIListView = api.require('UIListView');
+		UIListView.hide();
+	}
+
+	function open_friend_list_frame() {
+		var UIListView = api.require('UIListView');
+		UIListView.show();
+	}
+
+	var tab = new auiTab({
+		element: document.getElementById("tab"),
+	}, function(ret) {
+		if (ret.index == 1) {
+			$api.css($api.dom("#haoyou"), 'display:block');
+			$api.css($api.dom('#qunzu'), 'display: none');
+			open_friend_list_frame()
+			$api.setStorage('group_or_friend', 0);
+		} else if (ret.index == 2) {
+			$api.css($api.dom("#qunzu"), 'display:block');
+			$api.css($api.dom('#haoyou'), 'display: none');
+			close_friend_list_frame()
+			$api.setStorage('group_or_friend', 1);
+		} else if (ret.index == 3) {
+			$api.css($api.dom("#qunzu"), 'display:block');
+			$api.css($api.dom('#haoyou'), 'display: none');
+		}
+	});
+
+
+
+	// 进入聊天页面
+	function li(id, zh, tx) {
+		if ($api.getStorage('id') == id) {} else {
+			api.openWin({
+				reload: true,
+				name: 'chat',
+				url: 'win_chat.html',
+				vScrollBarEnabled: false,
+				pageParam: {
+					id: id,
+					zh: zh,
+					tx: tx
+				}
+			});
+		}
+	}
+	// 系统消息
+	function msg() {
+		api.openWin({
+			reload: true,
+			name: 'win_msg',
+			url: 'win_msg.html',
+			vScrollBarEnabled: false
+		});
+	}
+
+	function qun_list() {
+		var html = '';
+		var query = api.require("query");
+		$api.css($api.dom('.spinner'), 'display: block');
+		query.createQuery(function(ret, err) {
+			if (ret && ret.qid) {
+				var queryId = ret.qid;
+				query.desc({
+					qid: queryId,
+					column: 'createdAt'
+				});
+				query.whereEqual({
+					qid: queryId,
+					column: 'uid',
+					value: $api.getStorage('id')
+				});
+				query.whereEqual({
+					qid: queryId,
+					column: 'zt',
+					value: 2
+				});
+				var model = api.require("model");
+				model.findAll({
+					class: "qun_user",
+					qid: queryId
+				}, function(ret, err) {
+					if (ret.length > 0) {
+						for (var i = 0; i < ret.length; i++) {
+							html += '<li class="aui-list-item aui-list-item-middle aui-list-item-arrow" tapmode onclick="qun(\'' + ret[i].qun_id + '\',\'' + ret[i].qun_zh + '\',\'' + ret[i].qun_tx + '\')">';
+							html += '<div class="aui-media-list-item-inner">';
+							html += '<div class="aui-list-item-media wechat-avatar"><img src="' + ret[i].qun_tx + '" /></div>';
+							html += '<div class="aui-list-item-inner">';
+							html += '<div class="aui-list-item-text">';
+							html += '<div class="aui-list-item-title">' + ret[i].qun_zh + '</div></div>';
+							// html += '<div class="aui-list-item-text aui-font-size-12">' + ret[i].qun_sm + '</div>';
+							html += '</div></div></li>';
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.html($api.dom('#qun_list'), html);
+						}
+					} else {
+						$api.css($api.dom('.spinner'), 'display: none');
+						$api.css($api.dom('.kong'), 'display:block');
+					}
+				});
+			}
+		});
+	}
+
+	function qun_list1() {
+		var html = '';
+		var query = api.require("query");
+		$api.css($api.dom('.spinner'), 'display: block');
+		query.createQuery(function(ret, err) {
+			if (ret && ret.qid) {
+				var queryId = ret.qid;
+				query.desc({
+					qid: queryId,
+					column: 'createdAt'
+				});
+				query.whereEqual({
+					qid: queryId,
+					column: 'glid',
+					value: $api.getStorage('id')
+				});
+				var model = api.require("model");
+				model.findAll({
+					class: "qun",
+					qid: queryId
+				}, function(ret, err) {
+					if (ret.length > 0) {
+						for (var i = 0; i < ret.length; i++) {
+							html += '<li class="aui-list-item aui-list-item-middle aui-list-item-arrow" tapmode onclick="qun(\'' + ret[i].qun_id + '\',\'' + ret[i].qun_zh + '\',\'' + ret[i].qun_tx + '\')">';
+							html += '<div class="aui-media-list-item-inner">';
+							html += '<div class="aui-list-item-media wechat-avatar"><img src="' + ret[i].qun_tx + '" /></div>';
+							html += '<div class="aui-list-item-inner">';
+							html += '<div class="aui-list-item-text">';
+							html += '<div class="aui-list-item-title">' + ret[i].qun_zh + '</div></div>';
+							// html += '<div class="aui-list-item-text aui-font-size-12">' + ret[i].qun_sm + '</div>';
+							html += '</div></div></li>';
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.html($api.dom('#qun_list1'), html);
+						}
+					} else {
+						$api.css($api.dom('.spinner'), 'display: none');
+						$api.css($api.dom('.kong'), 'display:block');
+					}
+				});
+			}
+		});
+	}
+
+	function qun(id, zh, tx) {
+		api.openWin({
+			reload: true,
+			name: 'win_qun',
+			url: 'win_qun.html',
+			vScrollBarEnabled: false,
+			pageParam: {
+				qun_id: id,
+				qun_zh: zh,
+				qun_tx: tx
+			}
+		});
+	}
+
+
+
+
+
+
+
+	function xxshu() {
+		var query = api.require("query");
+		query.createQuery(function(ret, err) {
+			if (ret && ret.qid) {
+				var queryId = ret.qid;
+				query.whereEqual({
+					qid: queryId,
+					column: 'zt',
+					value: 0
+				});
+				query.whereEqual({
+					qid: queryId,
+					column: 'glid',
+					value: $api.getStorage("id")
+				});
+				var model = api.require("model");
+				model.findAll({
+					class: "qun_user",
+					qid: queryId
+				}, function(ret, err) {
+					if (ret.length > 0) {
+						$api.html($api.dom(".aui-badge"), ret.length);
+						$api.css($api.dom(".aui-badge"), 'display:block');
+					} else {
+						$api.css($api.dom(".aui-badge"), 'display:none');
+					}
+				});
+			}
+		});
+	}
+
+
+
+
+	function xxshu1() {
+		var query = api.require("query");
+		query.createQuery(function(ret, err) {
+			if (ret && ret.qid) {
+				var queryId = ret.qid;
+				query.whereEqual({
+					qid: queryId,
+					column: 'zt',
+					value: 2
+				});
+				query.whereEqual({
+					qid: queryId,
+					column: 'uid',
+					value: $api.getStorage("id")
+				});
+				var model = api.require("model");
+				model.findAll({
+					class: "qun_user",
+					qid: queryId
+				}, function(ret, err) {
+					if (ret.length > 0) {
+						$api.html($api.dom(".aui-badge"), ret.length);
+						$api.css($api.dom(".aui-badge"), 'display:block');
+					} else {
+						$api.css($api.dom(".aui-badge"), 'display:none');
+					}
+				});
+			}
+		});
+	}
+
+	function qun_add() {
+		api.openWin({
+			bounces: false,
+			name: 'win_qun_add',
+			url: 'win_qun_add.html',
+			vScrollBarEnabled: false
+		});
+	}
+
+
+
+
+
+
+	// 刷新本地好友数据
+	function get_friend_data(i) {
+		api.ajax({
+			url: $api.getStorage('IPandPORT') + '/api/friends_list/',
+			method: 'get',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			data: {
+				body: {
+					user_id: i
+				}
+			}
+		}, function(ret, err) {
+			if (ret) {
+				friend_data = []
+				for (var i = 0; i < ret.length; i++) {
+					var firend = {
+						uid: ret[i]['my_friend']['id'],
+						imgPath: ret[i]['my_friend']['header_url'],
+						title: ret[i]['my_friend']['nick_name'],
+						subTitle: '欢迎来到短视频app',
+					}
+					friend_data.push(firend)
+				}
+				$api.setStorage('my_friends', friend_data);
+			} else {
+				alert(JSON.stringify(err))
+			}
+		});
+	}
+
+
+	function opensearch() {
+		api.openWin({
+			name: 'search',
+			url: 'win_search.html',
+			pageParam: {
+				name: 'test'
+			}
+		});
+	}
+
+
+	// 删除列表对应消息
+	function deleteitemmsg(i) {
+		var UIListView = api.require('UIListView');
+		UIListView.deleteItem({
+			index: i
+		}, function(ret, err) {
+			// if (ret) {
+			//     alert(JSON.stringify(ret));
+			// } else {
+			//     alert(JSON.stringify(err));
+			// }
+		});
+	}
+
+
+
+</script>
+
+</html>

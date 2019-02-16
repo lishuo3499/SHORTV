@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<link rel="stylesheet" type="text/css" href="../../css/group/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/group/laoding.css" />
+		<style type="text/css">
+			.aui-list .wechat-avatar {
+				width: 3rem;
+			}
+			.wechat-avatar, .wechat-avatar > img {
+				border-radius: 8px;
+			}
+			.aui-list .aui-list-item-text img {
+				width: 14px;
+				height: 14px;
+			}
+			.aui-list .aui-list-item-text {
+				-webkit-justify-content: flex-start;
+				justify-content: flex-start;
+				white-space: nowrap;
+				overflow: hidden;
+				width: 80%;
+			}
+			.aui-list .aui-list-item-right {
+				right: 20px;
+				position: fixed;
+			}
+			.aui-list .aui-list-item-title {
+				font-size: 0.8rem;
+				position: relative;
+				max-width: 100%;
+				color: #212121;
+			}
+			.aui-list {
+				border-top: none;
+			}
+			@media screen and (-webkit-min-device-pixel-ratio: 1.5) {
+				.aui-list {
+					border: none;
+					background-size: 100% 0px;
+				}
+			}
+			.look {
+				position: absolute;
+				top: 1rem;
+				left: 82%;
+				font-size: 0.75rem;
+				color: #F05D4B;
+				z-index: 88888;
+				padding-right: 0.4rem;
+			}
+			.hl {
+				color: #A1A1A1
+			}
+		</style>
+	</head>
+	<body>
+		<div class="aui-content aui-margin-b-15">
+			<ul class="aui-list aui-media-list aui-list-in" id="xx_list"></ul>
+		</div>
+		<div class="spinner">
+			<div class="bounce1"></div>
+			<div class="bounce2"></div>
+			<div class="bounce3"></div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/group/api.js" ></script>
+	<script type="text/javascript" src="../../script/group/aui-dialog.js" ></script>
+	<script type="text/javascript" src="../../script/group/sha1.min.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			xx();
+			xx1();
+			api.setCustomRefreshHeaderInfo({
+				bgColor : '#ffffff',
+				image : {
+					pull : ['widget://image/1.png', 'widget://image/2.png', 'widget://image/3.png', 'widget://image/4.png', 'widget://image/5.png', 'widget://image/6.png', 'widget://image/7.png', 'widget://image/8.png'],
+					load : ['widget://image/8.png', 'widget://image/7.png', 'widget://image/6.png', 'widget://image/5.png', 'widget://image/4.png', 'widget://image/3.png', 'widget://image/2.png', 'widget://image/1.png']
+				}
+			}, function() {
+				xx();
+				xx1();
+				setTimeout(function() {
+					api.refreshHeaderLoadDone();
+				}, 3000)
+			});
+			api.addEventListener({
+				name : 'yz'
+			}, function(ret, err) {
+				xx();
+				xx1();
+			});
+			api.addEventListener({
+				name : 'chuli'
+			}, function(ret, err) {
+				xx();
+				xx1();
+			});
+		}
+		function xx() {
+			var html = '';
+			var query = api.require("query");
+			$api.css($api.dom('.spinner'), 'display: block');
+			query.createQuery(function(ret, err) {
+				if (ret && ret.qid) {
+					var queryId = ret.qid;
+					query.desc({
+						qid : queryId,
+						column : 'createdAt'
+					});
+					query.whereEqual({
+						qid : queryId,
+						column : 'glid',
+						value : $api.getStorage('id')
+					});
+					var model = api.require("model");
+					model.findAll({
+						class : "qun_user",
+						qid : queryId
+					}, function(ret, err) {
+						if (ret.length > 0) {
+							for (var i = 0; i < ret.length; i++) {
+								clear_group_xxs(ret[i].uid)
+								console.log(ret[i].uid);
+								if (ret[i].zt == '0') {
+									html += '<li class="aui-list-item aui-list-item-middle" tapmode onclick="caozuo(\'' + ret[i].id + '\',\'' + ret[i].uid + '\',\'' + ret[i].qun_id + '\',\'' + ret[i].qun_zh + '\')">';
+									html += '<div class="aui-media-list-item-inner">';
+									html += '<div class="look">操作</div>';
+								} else if (ret[i].zt == '1') {
+									html += '<li class="aui-list-item aui-list-item-middle">';
+									html += '<div class="aui-media-list-item-inner">';
+									html += '<div class="look hl">未通过</div>';
+								} else if (ret[i].zt == '2') {
+									html += '<li class="aui-list-item aui-list-item-middle">';
+									html += '<div class="aui-media-list-item-inner">';
+									html += '<div class="look hl">已通过</div>';
+								}
+								html += '<div class="aui-list-item-media wechat-avatar"><img src="' + ret[i].tx + '" /></div>';
+								html += '<div class="aui-list-item-inner">';
+								html += '<div class="aui-list-item-text">';
+								html += '<div class="aui-list-item-title">申请加群(' + ret[i].qun_id + ')</div></div>';
+								html += '<div class="aui-list-item-text aui-font-size-12">' + ret[i].zh + '：' + ret[i].qun_sm + '</div>';
+								html += '</div></div></li>';
+							}
+							$api.html($api.dom('#xx_list'), html);
+						} else {
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.css($api.dom('.kong'), 'display:block');
+							api.refreshHeaderLoadDone();
+						}
+					});
+				}
+			});
+		}
+
+		function xx1() {
+			var html = '';
+			var query = api.require("query");
+			query.createQuery(function(ret, err) {
+				if (ret && ret.qid) {
+					var queryId = ret.qid;
+					query.desc({
+						qid : queryId,
+						column : 'createdAt'
+					});
+					query.whereEqual({
+						qid : queryId,
+						column : 'uid',
+						value : $api.getStorage('id')
+					});
+					query.whereEqual({
+						qid : queryId,
+						column : 'zt',
+						value : 2
+					});
+					var model = api.require("model");
+					model.findAll({
+						class : "qun_user",
+						qid : queryId
+					}, function(ret, err) {
+						if (ret.length > 0) {
+							for (var i = 0; i < ret.length; i++) {
+								clear_group_xxs(ret[i].uid)
+								console.log(ret.length);
+								html += '<li class="aui-list-item aui-list-item-middle" tapmode onclick="qun(\'' + ret[i].qun_id + '\',\'' + ret[i].qun_zh + '\',\'' + ret[i].qun_tx + '\')">';
+								html += '<div class="aui-media-list-item-inner">';
+								html += '<div class="look">进入</div>';
+								html += '<div class="aui-list-item-media wechat-avatar"><img src="' + ret[i].qun_tx + '" /></div>';
+								html += '<div class="aui-list-item-inner">';
+								html += '<div class="aui-list-item-text">';
+								html += '<div class="aui-list-item-title">加群成功哦！</div></div>';
+								html += '<div class="aui-list-item-text aui-font-size-12">欢迎加入 ' + ret[i].zh + '</div>';
+								html += '</div></div></li>';
+							}
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.html($api.dom('#xx_list'), html);
+							$api.css($api.dom('.kong'), 'display:block');
+							api.refreshHeaderLoadDone();
+						} else {
+							$api.css($api.dom('.spinner'), 'display: none');
+							$api.css($api.dom('.kong'), 'display:block');
+							api.refreshHeaderLoadDone();
+						}
+					});
+				}
+			});
+		}
+
+		function caozuo(id, uid, qun_id, qun_zh) {
+			var model = api.require("model");
+			var dialog = new auiDialog({});
+			dialog.alert({
+				title : "友情提示",
+				msg : '是否通过申请',
+				buttons : ['忽略', '通过']
+			}, function(ret) {
+				if (ret.buttonIndex == 2) {
+					var appKey = "e5t4ouvpe670a";
+					var appSecret = "CtuQTLNeFbg";
+					var nonce = Math.floor(Math.random() * 1000000);
+					var timestamp = Date.now();
+					var signature = sha1("" + appSecret + nonce + timestamp);
+					api.ajax({
+						url : "http://api.cn.ronghub.com/group/join.json",
+						method : "post",
+						headers : {
+							"RC-App-Key" : appKey,
+							"RC-Nonce" : "" + nonce,
+							"RC-Timestamp" : "" + timestamp,
+							"RC-Signature" : "" + signature,
+							"Content-Type" : "application/x-www-form-urlencoded"
+						},
+						data : {
+							values : {
+								userId : uid, //要加入群的用户 Id，可提交多个，最多不超过 1000 个。（必传）
+								groupId : qun_id, //要加入的群 Id。（必传）
+								groupName : qun_zh//要加入的群 Id 对应的名称。（必传）
+							}
+						}
+					}, function(ret, err) {
+						if (ret.code == 200) {
+							var model = api.require('model');
+							model.updateById({
+								class : 'qun_user',
+								id : id,
+								value : {
+									zt : 2
+								}
+							}, function(ret, err) {
+								if (ret) {
+									var rong = api.require('rongCloud2');
+									var extra = {
+									    uid : uid,
+										xm1 : '0',
+										xm2 : '0',
+										tx1 : '0',
+										tx2 : '0'
+									};
+
+									rong.sendTextMessage({
+										conversationType : 'PRIVATE',
+										targetId : uid,
+										text : '#1#',
+										extra : JSON.stringify(extra)
+									}, function(ret, err) {
+										if (ret.status == 'success') {
+										clear_group_xxs(uid)
+											api.toast({
+												msg : '通过审核',
+											});
+											api.sendEvent({
+												name : 'chuli'
+											});
+										}
+									});
+								} else {
+									api.toast({
+										msg : '处理失败',
+									});
+								}
+							});
+						}
+					});
+				} else {
+					model.updateById({
+						class : 'qun_user',
+						id : id,
+						value : {
+							zt : 1
+						}
+					}, function(ret, err) {
+						if (ret) {
+						clear_group_xxs(uid)
+							api.toast({
+								msg : '已忽略',
+							});
+							api.sendEvent({
+								name : 'chuli'
+							});
+						} else {
+							api.toast({
+								msg : '处理失败',
+							});
+						}
+					});
+				}
+			})
+		}
+
+function clear_group_xxs(uid) {
+	var rong = api.require('rongCloud2');
+	rong.clearMessagesUnreadStatus({
+		conversationType: 'PRIVATE',
+		targetId: uid
+	}, function(ret, err) {
+
+	})
+	// 消息未读数小红点
+	api.sendEvent({
+		name: 'xxs'
+	});
+}
+
+		function qun(id, zh, tx) {
+			api.openWin({
+				reload : true,
+				name : 'win_qun',
+				url : 'win_qun.html',
+				vScrollBarEnabled : false,
+				pageParam : {
+					qun_id : id,
+					qun_zh : zh,
+					qun_tx : tx
+				}
+			});
+			api.sendEvent({
+				name : 'jinru'
+			});
+		}
+	</script>
+</html>

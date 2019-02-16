@@ -1,0 +1,488 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>APICloud App</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+    <link rel="stylesheet" href="./css/swiper.min.css">
+    <script type="text/javascript" src="script/open_loading.js"></script>
+
+    <style>
+        footer {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            box-sizing: border-box;
+            height: 50px;
+            background-color: rgba(250, 250, 250, 0.0);
+            /*border-top: 1px solid #ccc;*/
+        }
+
+        footer>div {
+            -webkit-box-flex: 1;
+            -webkit-flex: 1;
+            flex: 1;
+            width: 100%;
+            color: rgb(165, 165, 165);
+            font-size: 12px;
+            text-align: center;
+            padding-bottom: 4px;
+            padding-top: 30px;
+            background-repeat: no-repeat;
+            background-position: center 6px;
+            background-size: auto 24px;
+        }
+
+        footer>div:nth-child(1) {
+            background-image: url(./image/footer/nav_home.png);
+        }
+
+        footer>div:nth-child(2) {
+            background-image: url(./image/footer/nav_attention.png);
+        }
+
+        footer>div:nth-child(3) {
+            width: 50px;
+            padding: 0;
+            margin: 0;
+            background-size: 40px;
+            background-image: url(./image/footer/btn_camera_highlight.png);
+        }
+
+        footer>div:nth-child(4) {
+            background-image: url(./image/footer/nav_message.png);
+        }
+
+        footer>div:nth-child(5) {
+            background-image: url(./image/footer/nav_personage.png);
+        }
+
+        footer>div:nth-child(1).active {
+            background-image: url(image/footer/nav_home.png);
+            color: #fff;
+        }
+
+        footer>div:nth-child(2).active {
+            background-image: url(image/footer/groupbuy_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        footer>div:nth-child(3).active {
+            background-image: url(image/footer/find_act.png);
+            color: rgb(254, 151, 84);
+        }
+
+        footer>div:nth-child(4).active {
+            background-image: url(image/footer/my_act.png);
+            color: rgb(254, 151, 84);
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <footer id="footer" style='z-index:999999;' class="">
+        <div class="menu active" tapmode="active">首页</div>
+        <div class="menu" tapmode="active">关注</div>
+        <div class="menu" tapmode="active"></div>
+        <div class="menu" tapmode="active">消息</div>
+        <div class="menu" tapmode="active">个人</div>
+    </footer>
+
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript" src="./script/common.js"></script>
+<script type="text/javascript" src="./script/localdb.js"></script>
+<script type="text/javascript" src="./script/open_loading.js"></script>
+<script type="text/javascript" src="./script/setStorage_all_js.js"></script>
+
+<script type="text/javascript">
+    apiready = function() {
+
+        load_user_center_or_not() //第一次进入center界面为1否则0
+        var header = document.querySelector('#header');
+        $api.fixStatusBar(header);
+        if (api.systemType == 'ios') {
+            $api.fixIos7Bar(header);
+        }
+        $api.fixStatusBar(header);
+        api.setStatusBarStyle({
+            style: 'dark',
+            color: 'yellow'
+        });
+
+
+
+        var model = api.require('model');
+        model.config({
+            appKey: 'DB6BB350-1DC3-41E2-7345-761822F8D562',
+            host: 'https://d.apicloud.com'
+        });
+
+
+
+        //存储请求ip和端口
+        // $api.clearStorage();
+        $api.setStorage('IPandPORT', 'http://linke.xtu.edu.cn');
+        $api.setStorage('which_page', 0); //group页面
+
+
+
+        // 打开footer
+        var footer = $api.byId('footer');
+        footerHeight = $api.offset(footer).t;
+        footerwidth = $api.offset(footer).w;
+
+        // 打开footer
+        api.openFrame({
+            name: 'footer',
+            url: './html/footer/footer.html',
+            rect: {
+                x: 0,
+                y: api.winHeight - 50,
+                w: footerwidth,
+                h: 60
+            },
+            pageParam: {
+                name: 'test'
+            },
+      			animation: {
+      				type: "fade",
+      				subType: "from_right",
+      				duration: 200
+      			},scrollEnabled:false,
+            vScrollBarEnabled:false,
+            hScrollBarEnabled:false,
+
+        });
+        $api.addCls(footer, 'displayNone');
+        api.openFrame({
+            name: 'index0',
+            url: './html/home_frame.html',
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            },
+            pageParam: {
+                frome_where: 'index'
+            },
+      			animation: {
+      				type: "fade",
+      				subType: "from_right",
+      				duration: 200
+      			}
+        });
+
+        $api.addCls(footer, 'displayNone');
+        // 把footer调整到最前面
+        api.bringFrameToFront({
+            from: 'footer',
+        });
+
+
+
+
+
+        // 监听footer事件
+        // index页面
+        api.addEventListener({
+            name: 'index'
+        }, function(ret, err) {
+
+            api.openFrame({
+                name: 'index0',
+                url: './html/home_frame.html',
+                rect: {
+                    x: 0,
+                    y: 0,
+                    w: 'auto',
+                    h: 'auto'
+                },
+                pageParam: {
+                    frome_where: 'index'
+                },
+                bounces: true,
+                bgColor: 'rgba(0,0,0,0)',
+                vScrollBarEnabled: true,
+                hScrollBarEnabled: true,
+          			animation: {
+          				type: "fade",
+          				subType: "from_right",
+          				duration: 200
+          			}
+            });
+            api.sendEvent({
+                name: 'start_video_play', //开始播放事件
+            });
+            api.sendEvent({
+                name: 'home_frame0_video_stop', //停止homeframe0播放事件
+            });
+            api.bringFrameToFront({
+                from: 'footer'
+            });
+
+        });
+
+
+
+        // 关注页面
+        api.addEventListener({
+            name: 'attention'
+        }, function(ret, err) {
+                      api.openFrame({
+                          name: 'index1',
+                          url: 'html/home_frame0.html',
+                          rect: {
+                              x: 0,
+                              y: 0,
+                              w: 'auto',
+                              h: api.winHeight - 50
+                          },
+                          pageParam: {
+                              name: 'test'
+                          },
+                          vScrollBarEnabled: true,
+                          hScrollBarEnabled: true,
+                    			animation: {
+                    				type: "fade",
+                    				subType: "from_right",
+                    				duration: 200
+                    			}
+                      });
+                  api.sendEvent({
+                      name: 'stop_video_play', //开始homeframe播放事件
+                  });
+                  api.sendEvent({
+                      name: 'home_frame0_video_start', //停止homeframe0播放事件
+                  });
+            // api.bringFrameToFront({
+            //     from: 'footer',
+            // });
+        });
+
+
+
+
+
+        // 相机页面
+        api.addEventListener({
+            name: 'camera'
+        }, function(ret, err) {
+            // api.openFrame({
+            //     name: 'send',
+            //     url: './html/camera/send.html',
+            //     rect: {
+            //         x: 0,
+            //         y: 0,
+            //         w: 'auto',
+            //         h: 'auto'
+            //     },
+            //     pageParam: {
+            //         thumbnailPath: ret['thumbnailPath'],
+            //         videoPath: ret['videoPath']
+            //     },
+            //     bgColor: 'rgba(0,0,0,0)',
+            // });
+            var demo = api.require('quPaiModule'); //打开相机
+            demo.permissionCheck(
+                function(ret) {
+                    var param = {
+                        resolutionMode: 4,
+                        ratioMode: 3,
+                        recordMode: 3,
+                        beautyStatus: true,
+                        beautyLevel: 0,
+                        isCameraBack: false,
+                        isNeedClip: true,
+                        minDuration: 2,
+                        maxDuration: 30,
+                        videoQuality: 4,
+                        gop: 1,
+                        frameRate: 100
+                    };
+                    var demo = api.require('quPaiModule');
+                    demo.record(param,
+                        function(ret) {
+                            if (ret) {
+                                if (ret['status'] == false) {} else {
+                                    api.openFrame({
+                                        name: 'send',
+                                        url: './html/camera/send.html',
+                                        rect: {
+                                            x: 0,
+                                            y: 0,
+                                            w: 'auto',
+                                            h: 'auto'
+                                        },
+                                        pageParam: {
+                                            thumbnailPath: ret['thumbnailPath'],
+                                            videoPath: ret['videoPath']
+                                        },
+                                        bgColor: 'rgba(0,0,0,0)',
+                                  			animation: {
+                                  				type: "fade",
+                                  				subType: "from_right",
+                                  				duration: 200
+                                  			}
+                                    });
+                                }
+                            } else {
+
+                            }
+                        });
+                });
+
+        });
+
+
+
+
+        //打开消息界面
+        api.addEventListener({
+            name: 'message'
+        }, function(ret, err) {
+            // open_loading(1)
+            var zt = $api.getStorage('zt')
+            if (zt == 1) {
+                api.openFrame({
+                    name: 'chat_page',
+                    url: 'html/group/main.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 'auto',
+                        h: api.winHeight - 50
+                    },
+                    pageParam: {
+                        name: 'test'
+                    },
+                    animation: {
+                      type: "fade",
+                      subType: "from_right",
+                      duration: 200
+                    }
+                });
+                var group_page = $api.getStorage('which_page');
+                open_group_page(group_page)
+                if (group_page == 1 && $api.getStorage('group_or_friend') == 0) { //当打开的是好友同时打开列表
+                    api.sendEvent({
+                        name: 'show_list'
+                    });
+                }
+                // api.bringFrameToFront({
+                //     from: 'footer',
+                // });
+            } else {
+                api.openWin({
+                    bounces: false,
+                    name: 'login',
+                    url: './html/chat/win_login.html',
+                    vScrollBarEnabled: false,
+                    hScrollBarEnabled: false
+                });
+            }
+
+
+        });
+
+        // 登录界面
+
+        api.addEventListener({
+            name: 'login'
+        }, function(ret, err) {
+            api.openFrame({
+                name: 'user_header',
+                url: './html/user/user_header.html',
+                rect: {
+                    x: 0,
+                    y: 0,
+                    w: 'auto',
+                    h: 250
+                },
+                pageParam: {
+                    name: 'test'
+                },
+                animation: {
+                  type: "fade",
+                  subType: "from_right",
+                  duration: 200
+                }
+            });
+
+            // bring_load_to_index() //带loading回最前面
+
+
+        });
+    }
+
+    // 滑动group切换导航
+    function select_header_or_not(i) {
+        var NVNavigationBar = api.require('NVNavigationBar');
+        NVNavigationBar.setSelected({
+            id: 'first',
+            index: i,
+            selected: true
+        }, function(ret) {
+
+        });
+    }
+    // 切换group
+    function open_frame_group_index(i) {
+        api.setFrameGroupIndex({
+            name: 'message_attention_user_page',
+            index: i,
+            scroll: true
+        });
+    }
+
+
+    function fnInitSwipe() {
+        var swipe = $api.byId('swipe'),
+            indicators = $api.domAll(swipe, 'li');
+
+        new Swipe(swipe, {
+            callback: function(index) {
+                for (var i = 0; i < indicators.length; i++) {
+                    if (index == i) {
+                        $api.addCls(indicators[i], 'active');
+                    } else {
+                        $api.removeCls(indicators[i], 'active');
+                    }
+                }
+            }
+        });
+    }
+
+
+
+
+    //group页面打开页面
+    function open_group_page(i) {
+        var frame_name = ['msg', 'friends', 'site'],
+            frame_html = ['html/group/frame_hhxx', 'html/group/frame_friends', 'html/my_frame']
+        api.openFrame({
+            name: frame_name[i],
+            url: frame_html[i] + '.html',
+            rect: {
+                x: 0,
+                y: 70,
+                w: 'auto',
+                h: api.frameHeight - 70 - 60
+            },
+            pageParam: {}
+        });
+    }
+</script>
+
+<!-- 滑动组件 -->
+<script type="text/javascript" src="http://js.3conline.com/wap/common/zepto.1.0.min.js"></script>
+<script src="./script/swiper.min.js"></script>
+
+
+</html>
